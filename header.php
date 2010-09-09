@@ -17,8 +17,13 @@
 
     <link rel="pingback" href="<?php bloginfo('pingback_url'); ?>">
     <link rel="alternate" type="application/rss+xml" title="<?php bloginfo('name'); ?>" href="/feed" />
-    <link rel="stylesheet" type="text/css" href="<?php $T->style(); ?>/css/reset.css" />
-    <link rel="stylesheet" type="text/css" href="<?php $T->style(); ?>/css/style.css" />
+
+    <?php /* Add your stylesheets in haybase.json */ ?>
+    <?php if (!empty($T->getConfig()->css->files)): ?>
+        <?php foreach ($T->getConfig()->css->files as $file): ?>
+            <link rel="stylesheet" type="text/css" href="<?php echo $file; ?>" />
+        <?php endforeach; ?>
+    <?php endif; ?>
 
     <?php wp_head(); ?>
 </head>

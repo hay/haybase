@@ -64,35 +64,46 @@ class Haybase {
 
     // Private methods
 
-    // Reads the config.json in the inc/ directory, and returns it as an
-    // array
+    // Gets the haybase.json file and parses it to an array
     private function readConfig() {
-        $file = file_get_contents(TEMPLATEPATH . "/inc/config.json");
+        $file = file_get_contents(TEMPLATEPATH . "/" . HAYBASE_CONFIG_FILE);
         if (!$file) {
-            $this->halt("Could not read the config.json file. Is it in inc?");
+            $this->halt("Could not read configuration file. Is HAYBASE_CONFIG_FILE set correctly?");
         }
 
         $conf = json_decode($file);
         if (!$conf) {
             $this->halt("Could not decode JSON. Is it valid? Try jsonlint.com!");
         }
-
+        
+        // Preprocess some of the configuration options so we don't need to 
+        // call extra methods in the implementation files
         $conf = $this->processJavascript($conf);
+        $conf = $this->processCss($conf);
 
         return $conf;
+    }
+    
+    private function rewriteExternalFiles($files) {
+        foreach ($files as &$file) {
+            if (substr($file, 0, 4) != "http") {
+                $file = $this->getTheme() . "/" . $file;
+            }
+        }
+        return $files;
     }
 
     private function processJavascript($conf) {
-        // Javascript files not prefixed with "http" get the style path
-        // prepended
-        foreach ($conf->javascript->custom as &$js) {
-            if (substr($js, 0, 4) != "http") {
-                $js = $this->getTheme() . "/" . $js;
-            }
-        }
+        $conf->javascript->files = $this->rewriteExternalFiles($conf->javascript->files);
         return $conf;
     }
-
+    
+    private function processCss($conf) {
+        $conf->css->files = $this->rewriteExternalFiles($conf->css->files);
+        return $conf;
+    }
+    
+    // Superhandy lightweight template function 
     private function parseTemplate($file, $options) {
         $template = @file_get_contents($file);
         if (!$template) {

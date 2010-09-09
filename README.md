@@ -1,6 +1,6 @@
 Haybase
 =======
-A clean, object-orientated PHP5 theme framework for WordPress
+A clean, object-orientated PHP5 theme framework for WordPress, by Hay Kranen
 
 If you're like me, you like clean object-orientated modern PHP5 code.
 Unfortunately 99% of all WordPress themes and plugins (including the core
@@ -19,13 +19,15 @@ Features
   endlessly_long_function_names_with_lots_of_underscores_and_prefixes
 * HTML5 from the ground up, no useless XHTML namespaces and other stuff you
   don't need.
+* Timthumb image resize script for post thumbnails
 * Loads Javascripts at the bottom of the page with a Javascript loader,
   to speed up your site
+* Easy inclusion of Javascript / CSS files without changing the templates
 * HTML5 CSS reset
 * Easy addition of sidebars / widget areas
-* Timthumb image resize script for post thumbnails
 * Configuration by a JSON file instead of PHP constants or global variables
 * Easy ways to access common variables in your theme
+* Utility functions for commonly used stuff
 * Open source, GPL licensed. Just like WordPress itself.
 
 Requirements
@@ -35,14 +37,14 @@ Requirements
 
 Documentation
 -------------
-Learn more about Haybase
-http://www.haykranen.nl/projects/haybase
+Learn more about Haybase:
+* http://www.haykranen.nl/projects/haybase
 
-Fork it on github
-http://www.github.com/hay/haybase
+Fork it on github:
+* http://www.github.com/hay/haybase
 
-Mail me
-hay at bykr dot org
+Mail me:
+* hay@bykr.org
 
 FAQ
 ---
@@ -77,7 +79,7 @@ you really need.
 
 *I get a 'Could not decode JSON' error!*
 
-The config.json in 'inc/' should be valid. Check for missing commas and quotes.
+The config.json in 'haybase/' should be valid. Check for missing commas and quotes.
 Copy-paste your file in [jsonlint] to figure out what's wrong.
 
 *Why bother with WordPress at all? Why not use a proper coded CMS such as 
@@ -99,7 +101,9 @@ Thank you
 ---------
 Haybase includes code from:
 * html5reset:
-* html5boilerplate
+* html5boilerplate:
+* timthumb
+* jsDynaLoad: http://www.haykranen.nl/projects/jsdynaload
 
 [docs]: http://www.haykranen.nl/projects/haybase
 [jsonlint]: http://www.jsonlint.com

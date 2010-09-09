@@ -10,6 +10,7 @@
     javascripts to your inc/config.json under 'javascript->custom'. If you
     prefix them with http:// it is assumed they are external, otherwise they
     are loaded from the theme directory.
+    < http://www.haykranen.nl/projects/haykranen >
 */
 ?>
 function jsDynaLoad(b,c){function f(h,d){d=d||function(){};var a=document.createElement("script");a.type="text/javascript";if(a.readyState)a.onreadystatechange=function(){if(a.readyState==="loaded"||a.readyState==="complete"){a.onreadystatechange=null;d()}};else a.onload=function(){d()};a.src=h;document.getElementsByTagName("head")[0].appendChild(a)}c=c||function(){};if(typeof b==="string")f(b,c);else if(b instanceof Array){var e=0,i=b.length,g=function(){if(e>=i){c();return false}f(b[e],g);e++};
@@ -20,8 +21,8 @@ var __scripts = [];
 __scripts.push("http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js");
 <?php endif; ?>
 
-<?php if ($T->getConfig()->javascript->custom): ?>
-    <?php foreach($T->getConfig()->javascript->custom as $js) :?>
+<?php if ($T->getConfig()->javascript->files): ?>
+    <?php foreach($T->getConfig()->javascript->files as $js) :?>
         __scripts.push("<?php echo $js; ?>");
     <?php endforeach; ?>
 <?php endif; ?>
