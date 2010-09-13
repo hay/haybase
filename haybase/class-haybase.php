@@ -1,4 +1,8 @@
 <?php
+/*  Haybase - An object-orientated PHP5 theme framework for WordPress
+    By Hay Kranen < http://www.haykranen.nl/projects/haybase
+    Released under the GPL. See LICENSE for information
+*/
 class Haybase {
     protected $config;
 

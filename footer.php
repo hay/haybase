@@ -1,4 +1,9 @@
 <?php global $T; ?>
+
+<?php /* No hard feelings if you remove this line */ ?>
+<p>This site is powered by <a href="http://wordpress.org/">WordPress</a> and 
+<a href="http://www.haykranen.nl/projects/haybase">Haybase</a></p>
+
 </div> <!-- #wrapper -->
 <?php wp_footer(); ?>
 
@@ -48,5 +53,18 @@ jsDynaLoad(__scripts);
 
 <!-- <?php echo get_num_queries(); ?> queries. <?php timer_stop(1); ?> seconds. -->
 <?php /* "Just what do you think you're doing Dave?" */ ?>
+
+<!--
+._  _      _ ._ _  _|  |_
+|_)(_)\/\/(/_| (/_(_|  |_)\/
+|                         /
+ _                 _
+| |               | |
+| |     __,       | |   __,   ,   _
+|/ \   /  |  |   ||/ \_/  |  / \_|/
+|   |_/\_/|_/ \_/|/\_/ \_/|_/ \/ |__/
+            /|
+            \|
+-->
 </body>
 </html>

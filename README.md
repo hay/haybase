@@ -1,6 +1,6 @@
 Haybase
 =======
-A clean, object-orientated PHP5 theme framework for WordPress, by Hay Kranen
+A new object-orientated PHP5 theme framework for WordPress, by Hay Kranen
 
 If you're like me, you like clean object-orientated modern PHP5 code.
 Unfortunately 99% of all WordPress themes and plugins (including the core
@@ -70,6 +70,14 @@ new theme is to start from scratch. However, many lower-level functions are
 very common amongs themes, and Haybase provides a nice interface and starting
 point for those functions.
 
+*How do i upgrade?*
+
+All of Haybase's core files are in the `haybase` directory. Hopefully i won't 
+change the interface too much, but note that this is pre-alpha software in active
+development, so things might change rapidly. Also, to take advantage of new 
+features you probably need to add or change things in your haybase.json file and 
+add stuff in your theme using the `$T` object.
+
 *Where's (something.php) in your theme? It's included in twentyten/kubrick!*
 
 You don't need all files for every site. A theme actually only needs two files:
@@ -79,7 +87,8 @@ you really need.
 
 *I get a 'Could not decode JSON' error!*
 
-The config.json in 'haybase/' should be valid. Check for missing commas and quotes.
+The haybase.json the root of your theme folder should be valid. Check for 
+missing commas and quotes. 
 Copy-paste your file in [jsonlint] to figure out what's wrong.
 
 *Why bother with WordPress at all? Why not use a proper coded CMS such as 
@@ -88,21 +97,33 @@ Copy-paste your file in [jsonlint] to figure out what's wrong.
 Many people know WordPress, and the ui is pretty nice. There are thousands of 
 plugins available, and it runs on virtually any web host. 
 
+*Are there any examples of (free) themes using Haybase i can download, study
+and use?*
+
+Haybase is very new software, so no themes that i know of have been built. 
+If you have build a theme using Haybase that is free, please let me know so i 
+can add it to a list in this file and on the website!
+
+*I build a theme using Haybase, what do you think of it?*
+See previous question :)
+
 TODO
 ----
 Cool stuff in the near feature (fork on Github and contribute if you want!)
-* Configuration of theme options page
-* Move config.json options to that theme page (maybe?, might be a bit heavy on
+* Configuration of theme options page (easily create a theme options page for 
+  your theme.
+* Move haybase.json options to that theme page (maybe?, might be a bit heavy on
   the db.
 * Make something similar for plugins
+* Support for Haybase addons / extensions
 * Let Haybase make coffee and do your dishes (nah, not really ;)
 
 Thank you
 ---------
 Haybase includes code from:
-* html5reset:
-* html5boilerplate:
-* timthumb
+* html5reset: http://html5reset.org/
+* html5boilerplate: http://html5boilerplate.com/
+* timthumb: http://code.google.com/p/timthumb/
 * jsDynaLoad: http://www.haykranen.nl/projects/jsdynaload
 
 [docs]: http://www.haykranen.nl/projects/haybase
