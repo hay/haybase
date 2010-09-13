@@ -37,14 +37,11 @@ Requirements
 
 Documentation
 -------------
-Learn more about Haybase:
-* http://www.haykranen.nl/projects/haybase
+Learn more about Haybase: http://www.haykranen.nl/projects/haybase
 
-Fork it on github:
-* http://www.github.com/hay/haybase
+Fork it on github: http://www.github.com/hay/haybase
 
-Mail me:
-* hay@bykr.org
+Mail me: hay@bykr.org
 
 FAQ
 ---
@@ -105,11 +102,13 @@ If you have build a theme using Haybase that is free, please let me know so i
 can add it to a list in this file and on the website!
 
 *I build a theme using Haybase, what do you think of it?*
+
 See previous question :)
 
 TODO
 ----
 Cool stuff in the near feature (fork on Github and contribute if you want!)
+
 * Configuration of theme options page (easily create a theme options page for 
   your theme.
 * Move haybase.json options to that theme page (maybe?, might be a bit heavy on
@@ -121,6 +120,7 @@ Cool stuff in the near feature (fork on Github and contribute if you want!)
 Thank you
 ---------
 Haybase includes code from:
+
 * html5reset: http://html5reset.org/
 * html5boilerplate: http://html5boilerplate.com/
 * timthumb: http://code.google.com/p/timthumb/
