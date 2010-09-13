@@ -1,6 +1,6 @@
 Haybase
 =======
-A new object-orientated PHP5 theme framework for WordPress, by Hay Kranen
+**A new object-orientated PHP5 theme framework for WordPress, by Hay Kranen**
 
 If you're like me, you like clean object-orientated modern PHP5 code.
 Unfortunately 99% of all WordPress themes and plugins (including the core
