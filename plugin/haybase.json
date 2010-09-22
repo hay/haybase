@@ -1,0 +1,15 @@
+{
+    "css" : {
+        "files" : [
+            "style.css"
+        ]
+    },
+    
+    "js" : {
+        "libraries" : ["jquery"],
+        "load_at_bottom" : true,
+        "files" : [
+            "javascript.js"
+        ]
+    }   
+}
