@@ -1,13 +1,21 @@
 <?php
-/*  Haybase - An object-orientated PHP5 theme framework for WordPress
+/*  Haybase - makes developing WordPress themes and plugins infinitely easier
     By Hay Kranen < http://www.haykranen.nl/projects/haybase
     Released under the GPL. See LICENSE for information
 */
-class Haybase {
+abstract class Haybase {
+    private $configFile;
     protected $config;
+    
+    function __construct($configFile = false) {
+        if ($configFile) {
+            $this->configFile = $configFile;
+            $this->initWithConfig();
+        }
+    }
 
-    function __construct() {
-        $this->config = $this->readConfig();
+    public function initWithConfig() {
+        $this->config = $this->readConfig($this->configFile);
         $this->registerSidebars();
 
         add_theme_support('post-thumbnails');
@@ -15,9 +23,6 @@ class Haybase {
     	// This theme uses wp_nav_menu()
     	add_theme_support('nav-menus');
     }
-
-    // Public methods
-
 
     public function postthumb() {
         $thumbid = get_post_thumbnail_id($post->ID);
@@ -30,47 +35,69 @@ class Haybase {
         );
     }
 
-    public function theme($echo = true) {
-        if ($echo) {
-            bloginfo('template_directory');
-        } else {
-            return get_bloginfo('template_directory');
-        }
+    // Easy shortcuts to commonly used variables
+    // Use the get* variants for return, and the 'keyword' ones for 
+    // echoing
+    public function theme() {
+        echo $this->getTheme();
+    }
+    
+    public function getTheme() {
+        return get_bloginfo('template_directory');
     }
 
-    public function style($echo = true) {
-        if ($echo) {
-            echo bloginfo('stylesheet_directory');
-        } else {
-            return bloginfo('stylesheet_directory');
-        }
+    public function style() {
+        echo $this->getStyle();
+    }
+    
+    public function getStyle() {
+        return bloginfo('stylesheet_directory');
     }
 
-    public function home($echo = true) {
-        if ($echo) {
-            echo bloginfo('url');
-        } else {
-            return get_bloginfo('url');
-        }
+    public function home() {
+        echo $this->getHome();
     }
-
+    
+    public function getHome() {
+        return get_bloginfo('url');
+    }
+    
+    // Other stuff
     public function getConfig() {
         return $this->config;
     }
-
-    public function getSidebar($id) {
-        // Currently this function doesn't do anything fancy, but in the future
-        // we might, so this wrapper is already in place
-        if (function_exists('dynamic_sidebar')) {
-            dynamic_sidebar($id);
+    
+    // Superhandy lightweight template function 
+    protected function parseTemplate($file, $options) {
+        $template = @file_get_contents($file);
+        if (!$template) {
+            return false;
         }
+
+        preg_match_all("!\{([^{]*)\}!", $template, $matches);
+
+        $replacements = array();
+        for ($i = 0; $i < count($matches[1]); $i++) {
+            $key = $matches[1][$i];
+            if (isset($options[$key])) {
+                $val = $matches[0][$i];
+                $template = str_replace($val, $options[$key], $template);
+            }
+        }
+
+        return $template;
+    }    
+    
+    protected function halt($msg) {
+        die('<h1 style="color:red;">' . $msg . '</h1>');
     }
 
     // Private methods
 
     // Gets the haybase.json file and parses it to an array
-    private function readConfig() {
-        $file = file_get_contents(TEMPLATEPATH . "/" . HAYBASE_CONFIG_FILE);
+    private function readConfig($configFile) {
+        $file = file_get_contents($configFile);
+        
         if (!$file) {
             $this->halt("Could not read configuration file. Is HAYBASE_CONFIG_FILE set correctly?");
         }
@@ -107,53 +134,9 @@ class Haybase {
         return $conf;
     }
     
-    // Superhandy lightweight template function 
-    private function parseTemplate($file, $options) {
-        $template = @file_get_contents($file);
-        if (!$template) {
-            return false;
-        }
-
-        preg_match_all("!\{([^{]*)\}!", $template, $matches);
-
-        $replacements = array();
-        for ($i = 0; $i < count($matches[1]); $i++) {
-            $key = $matches[1][$i];
-            if (isset($options[$key])) {
-                $val = $matches[0][$i];
-                $template = str_replace($val, $options[$key], $template);
-            }
-        }
-
-        return $template;
-    }
-
-    private function registerSidebars() {
-        if (empty($this->config->sidebars->sidebars)) return false;
-        
-        foreach ($this->config->sidebars->sidebars as $sidebar) {
-            register_sidebar(array(
-                "id" => $sidebar->id,
-                "name" => $sidebar->name,
-                "before_widget" => $this->sidebars->before_widget,
-                "after_widget" => $this->sidebars->after_widget,
-                "before_title" => $this->sidebars->before_title,
-                "after_title" => $this->sidebars->after_title
-            ));
-        }
-    }
-
     private function resize($src, $width, $height, $zc = "1") {
         return sprintf($this->getTheme() . "/img/timthumb.php?src=%s&w=%s&h=%s&zc=%s",
             $src, $width, $height, $zc
         );
-    }
-
-    private function getTheme() {
-        return get_bloginfo('template_directory');
-    }
-
-    private function halt($msg) {
-        die('<h1 style="color:red;">' . $msg . '</h1>');
     }
 }
