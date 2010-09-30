@@ -92,6 +92,49 @@ abstract class Haybase {
     public function getSearchQuery() {
         return (empty($_GET['s'])) ? "" : $this->escape($_GET['s']);
     }
+    
+    public function archiveTitle() {
+        echo $this->getArchiveTitle();
+    }
+    
+    public function getArchiveTitle() {
+        switch ($this->getArchiveType()) {
+            case "category":
+                return single_cat_title('', false);
+                break;
+            case "tag":
+                return single_tag_title('', false);
+                break;
+            case "day":
+                return get_the_time('F jS, Y');
+                break;
+            case "month":
+                return get_the_time('F, Y');
+                break;
+            case "year":
+                return get_the_time('Y');
+                break;
+            case "author":
+                return '';
+                break;
+        }
+    }
+    
+    public function archiveType() {
+        echo $this->getArchiveType();
+    }
+    
+    public function getArchiveType() {
+        if (is_category()) return 'category';
+        if (is_tag()) return 'tag';
+        if (is_day()) return 'day';
+        if (is_month()) return 'month';
+        if (is_year()) return 'year';
+        if (is_author()) return 'author';
+        
+        // Probably a paged archive...
+        return 'archive';
+    }
 
     // Other stuff
     public function getConfig() {
