@@ -6,7 +6,7 @@
 abstract class Haybase {
     private $configFile;
     protected $config;
-    
+
     function __construct($configFile = false) {
         if ($configFile) {
             $this->configFile = $configFile;
@@ -24,24 +24,39 @@ abstract class Haybase {
     	add_theme_support('nav-menus');
     }
 
-    public function postthumb() {
+    public function getPostThumbResized($id, $width = false, $height = false) {
+        $imgUrl = $this->getPostThumbUrl($id);
+        if (!$imgUrl) return false;
+
+        $width = ($width) ? $width : $this->config->postthumb->width;
+        $height = ($height) ? $height : $this->config->postthumb->height;
+
+        return $this->resize($imgUrl, $width, $height);
+    }
+
+    public function getPostThumbUrl($id) {
         $thumbid = get_post_thumbnail_id($post->ID);
         $img = wp_get_attachment_image_src($thumbid, $size);
-        if (!$img) return;
-        echo $this->parseTemplate(
-            $this->theme(false) . "/templates/postthumb.html", array(
-                "img" => $this->resize($img[0], $this->config->postthumb->width, $this->config->postthumb->height)
-            )
-        );
+        if ($img) {
+            return $img;
+        } else if (!$img && $this->config->postthumb->custom_key) {
+            // Might have a custom key
+            $key = get_post_custom($id);
+            if ($key[$this->config->postthumb->custom_key]) {
+                return $key[$this->config->postthumb->custom_key][0];
+            }
+        } else {
+            return false;
+        }
     }
 
     // Easy shortcuts to commonly used variables
-    // Use the get* variants for return, and the 'keyword' ones for 
+    // Use the get* variants for return, and the 'keyword' ones for
     // echoing
     public function theme() {
         echo $this->getTheme();
     }
-    
+
     public function getTheme() {
         return get_bloginfo('template_directory');
     }
@@ -49,7 +64,7 @@ abstract class Haybase {
     public function style() {
         echo $this->getStyle();
     }
-    
+
     public function getStyle() {
         return bloginfo('stylesheet_directory');
     }
@@ -57,18 +72,38 @@ abstract class Haybase {
     public function home() {
         echo $this->getHome();
     }
-    
+
     public function getHome() {
         return get_bloginfo('url');
     }
-    
+
+    public function rss() {
+        echo $this->getRss();
+    }
+
+    public function getRss() {
+        return get_bloginfo('rss2_url');
+    }
+
+    public function searchQuery() {
+        echo $this->getSearchQuery();
+    }
+
+    public function getSearchQuery() {
+        return (empty($_GET['s'])) ? "" : $this->escape($_GET['s']);
+    }
+
     // Other stuff
     public function getConfig() {
         return $this->config;
     }
-    
-    // Superhandy lightweight template function 
-    protected function parseTemplate($file, $options) {
+
+    public function escape($str) {
+        return htmlentities($str);
+    }
+
+    // Superhandy lightweight template function
+    public function parseTemplate($file, $options) {
         $template = @file_get_contents($file);
         if (!$template) {
             return false;
@@ -86,8 +121,8 @@ abstract class Haybase {
         }
 
         return $template;
-    }    
-    
+    }
+
     protected function halt($msg) {
         die('<h1 style="color:red;">' . $msg . '</h1>');
     }
@@ -97,7 +132,7 @@ abstract class Haybase {
     // Gets the haybase.json file and parses it to an array
     private function readConfig($configFile) {
         $file = file_get_contents($configFile);
-        
+
         if (!$file) {
             $this->halt("Could not read configuration file. Is HAYBASE_CONFIG_FILE set correctly?");
         }
@@ -106,15 +141,15 @@ abstract class Haybase {
         if (!$conf) {
             $this->halt("Could not decode JSON. Is it valid? Try jsonlint.com!");
         }
-        
-        // Preprocess some of the configuration options so we don't need to 
+
+        // Preprocess some of the configuration options so we don't need to
         // call extra methods in the implementation files
         $conf = $this->processJavascript($conf);
         $conf = $this->processCss($conf);
 
         return $conf;
     }
-    
+
     private function rewriteExternalFiles($files) {
         foreach ($files as &$file) {
             if (substr($file, 0, 4) != "http") {
@@ -128,12 +163,12 @@ abstract class Haybase {
         $conf->javascript->files = $this->rewriteExternalFiles($conf->javascript->files);
         return $conf;
     }
-    
+
     private function processCss($conf) {
         $conf->css->files = $this->rewriteExternalFiles($conf->css->files);
         return $conf;
     }
-    
+
     private function resize($src, $width, $height, $zc = "1") {
         return sprintf($this->getTheme() . "/img/timthumb.php?src=%s&w=%s&h=%s&zc=%s",
             $src, $width, $height, $zc
