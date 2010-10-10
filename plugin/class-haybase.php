@@ -49,7 +49,7 @@ abstract class Haybase {
             return false;
         }
     }
-
+    
     // Easy shortcuts to commonly used variables
     // Use the get* variants for return, and the 'keyword' ones for
     // echoing
