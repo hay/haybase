@@ -178,6 +178,7 @@ abstract class Haybase {
         if (is_404()) return '404';
         if (is_archive()) return $this->getArchiveType();
         if (is_page()) return 'page';
+        if (is_single()) return 'singlepost';
         return 'unknown';
     }
 
