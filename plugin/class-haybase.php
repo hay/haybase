@@ -16,12 +16,8 @@ abstract class Haybase {
 
     public function initWithConfig() {
         $this->config = $this->readConfig($this->configFile);
-        $this->registerSidebars();
 
         add_theme_support('post-thumbnails');
-
-    	// This theme uses wp_nav_menu()
-    	add_theme_support('nav-menus');
     }
 
     public function getPostThumbResized($id, $width = false, $height = false) {
@@ -49,7 +45,60 @@ abstract class Haybase {
             return false;
         }
     }
-    
+
+    public function getRecentPosts($limit = 10) {
+		$q = new WP_Query(array(
+		  'showposts' => $limit,
+		  'nopaging' => 0,
+		  'post_status' => 'publish'
+        ));
+
+        if (!$q->have_posts()) {
+            return false;
+        }
+
+        $posts = array();
+        while ($q->have_posts()) {
+            $q->the_post();
+
+            $p = array(
+                "link" => get_permalink(),
+                "title" => get_the_title(),
+                "ID" => get_the_ID(),
+                "excerpt" => get_the_excerpt(),
+                "author" => get_the_author()
+            );
+
+            $posts[] = (object) $p;
+        }
+
+		wp_reset_postdata();
+
+		return $posts;
+    }
+
+    public function getRecentComments($limit = 10) {
+        $r = get_comments(array(
+            "number" => $limit,
+            "status" => "approve"
+        ));
+
+        $comments = array();
+        foreach ($r as $c) {
+            $a = array(
+                "author" => get_comment_author_link(),
+                "link" => get_comment_link($c->comment_ID),
+                "ID" => $c->comment_ID,
+                "text" => $c->comment_content,
+                "title" => get_the_title($c->comment_post_ID)
+            );
+
+            $comments[] = (object) $a;
+        }
+
+        return $comments;
+    }
+
     // Easy shortcuts to commonly used variables
     // Use the get* variants for return, and the 'keyword' ones for
     // echoing
@@ -92,11 +141,11 @@ abstract class Haybase {
     public function getSearchQuery() {
         return (empty($_GET['s'])) ? "" : $this->escape($_GET['s']);
     }
-    
+
     public function archiveTitle() {
         echo $this->getArchiveTitle();
     }
-    
+
     public function getArchiveTitle() {
         switch ($this->getArchiveType()) {
             case "category":
@@ -120,10 +169,22 @@ abstract class Haybase {
         }
     }
     
+    public function pageType() {
+        echo $this->getPageType();
+    }
+    
+    public function getPageType() {
+        if (is_home()) return 'home';
+        if (is_404()) return '404';
+        if (is_archive()) return $this->getArchiveType();
+        if (is_page()) return 'page';
+        return 'unknown';
+    }
+
     public function archiveType() {
         echo $this->getArchiveType();
     }
-    
+
     public function getArchiveType() {
         if (is_category()) return 'category';
         if (is_tag()) return 'tag';
@@ -131,7 +192,7 @@ abstract class Haybase {
         if (is_month()) return 'month';
         if (is_year()) return 'year';
         if (is_author()) return 'author';
-        
+
         // Probably a paged archive...
         return 'archive';
     }

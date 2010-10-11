@@ -7,10 +7,12 @@ class HaybaseTheme extends Haybase {
     function __construct($configFile = false) {
         if ($configFile) {
             parent::__construct($configFile);
+            $this->registerSidebars();
+            $this->registerNavMenus();
         }
     }
     
-    public function getSidebar($id) {
+    public function sidebar($id) {
         // Currently this function doesn't do anything fancy, but in the future
         // we might, so this wrapper is already in place
         if (function_exists('dynamic_sidebar')) {
@@ -18,7 +20,13 @@ class HaybaseTheme extends Haybase {
         }
     }
     
-    public function registerSidebars() {
+    public function navMenu($id) {
+        if (function_exists('wp_nav_menu')) {
+            wp_nav_menu($id);
+        }
+    }
+
+    private function registerSidebars() {
         if (empty($this->config->sidebars->sidebars)) return false;
         
         foreach ($this->config->sidebars->sidebars as $sidebar) {
@@ -30,6 +38,14 @@ class HaybaseTheme extends Haybase {
                 "before_title" => $this->sidebars->before_title,
                 "after_title" => $this->sidebars->after_title
             ));
+        }
+    }
+    
+    private function registerNavMenus() {
+        if (empty($this->config->menus->menus)) return false;
+        
+        foreach ($this->config->menus->menus as $menu) {
+            register_nav_menu($menu->id, $menu->name);
         }
     }
 }
