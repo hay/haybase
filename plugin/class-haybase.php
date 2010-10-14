@@ -98,6 +98,10 @@ abstract class Haybase {
 
         return $comments;
     }
+    
+    public function hasJsLib($lib) {
+        return in_array($lib, $this->config->javascript->libs);
+    }
 
     // Easy shortcuts to commonly used variables
     // Use the get* variants for return, and the 'keyword' ones for
