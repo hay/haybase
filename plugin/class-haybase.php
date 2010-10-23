@@ -86,7 +86,9 @@ abstract class Haybase {
         $comments = array();
         foreach ($r as $c) {
             $a = array(
-                "author" => get_comment_author_link(),
+                "author" => get_comment_author(),
+                "author_url" => get_comment_author_url(),
+                "author_link" => get_comment_author_link(),
                 "link" => get_comment_link($c->comment_ID),
                 "ID" => $c->comment_ID,
                 "text" => $c->comment_content,
@@ -98,9 +100,16 @@ abstract class Haybase {
 
         return $comments;
     }
-    
+
     public function hasJsLib($lib) {
         return in_array($lib, $this->config->javascript->libs);
+    }
+    
+    public function jsFilesAsScriptTags() {
+        if (!$this->config->javascript->files) return false;
+        foreach ($this->config->javascript->files as $js) {
+            printf('<script src="%s"></script>' . "\n", $js);
+        }
     }
 
     // Easy shortcuts to commonly used variables
@@ -173,10 +182,21 @@ abstract class Haybase {
         }
     }
     
+    public function bodyClass() {
+        echo $this->getBodyClass();
+    }
+    
+    // This function is virtually identical to pageType, but prefixes the 
+    // '404' as 'p404' because CSS classes that start with a number are invalid
+    public function getBodyClass() {
+        $c = $this->getPageType();
+        return ($c == "404") ? "p404" : $c;
+    }        
+
     public function pageType() {
         echo $this->getPageType();
     }
-    
+
     public function getPageType() {
         if (is_home()) return 'home';
         if (is_404()) return '404';
@@ -202,13 +222,39 @@ abstract class Haybase {
         return 'archive';
     }
 
+    public function authorUrl() {
+        echo $this->getAuthorUrl();
+    }
+
+    public function getAuthorUrl() {
+	   return get_author_posts_url(get_the_author_meta('ID'));
+    }
+
+    public function postCategories() {
+        echo $this->getPostCategories();
+    }
+
+    public function getPostCategories() {
+        $count = count(get_the_category());
+        if ($count < 1) return false;
+        return get_the_category_list(', ');
+    }
+
+    public function postTags() {
+        echo $this->getPostTags();
+    }
+
+    public function getPostTags() {
+        return get_the_tag_list('', ', ');
+    }
+
     // Other stuff
     public function getConfig() {
         return $this->config;
     }
 
     public function escape($str) {
-        return htmlentities($str);
+        return htmlentities($str, ENT_QUOTES);
     }
 
     // Superhandy lightweight template function
@@ -279,7 +325,7 @@ abstract class Haybase {
     }
 
     private function resize($src, $width, $height, $zc = "1") {
-        return sprintf($this->getTheme() . "/img/timthumb.php?src=%s&w=%s&h=%s&zc=%s",
+        return sprintf($this->getTheme() . "/img/timthumb.php?src=%s&amp;w=%s&amp;h=%s&amp;zc=%s",
             $src, $width, $height, $zc
         );
     }
