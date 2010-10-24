@@ -6,12 +6,18 @@
 abstract class Haybase {
     private $configFile;
     protected $config;
+    private $pluginPath, $pluginUrl;
 
     function __construct($configFile = false) {
         if ($configFile) {
             $this->configFile = $configFile;
             $this->initWithConfig();
         }
+
+        // This is a *little* dirty, but because the plugin's directory
+        // could be a symlink, we're doing it this way.
+		$this->pluginPath = WP_CONTENT_DIR . "/plugins/haybase";
+		$this->pluginUrl = WP_CONTENT_URL . "/plugins/haybase";
     }
 
     public function initWithConfig() {
@@ -104,7 +110,7 @@ abstract class Haybase {
     public function hasJsLib($lib) {
         return in_array($lib, $this->config->javascript->libs);
     }
-    
+
     public function jsFilesAsScriptTags() {
         if (!$this->config->javascript->files) return false;
         foreach ($this->config->javascript->files as $js) {
@@ -181,17 +187,17 @@ abstract class Haybase {
                 break;
         }
     }
-    
+
     public function bodyClass() {
         echo $this->getBodyClass();
     }
-    
-    // This function is virtually identical to pageType, but prefixes the 
+
+    // This function is virtually identical to pageType, but prefixes the
     // '404' as 'p404' because CSS classes that start with a number are invalid
     public function getBodyClass() {
         $c = $this->getPageType();
         return ($c == "404") ? "p404" : $c;
-    }        
+    }
 
     public function pageType() {
         echo $this->getPageType();
@@ -325,7 +331,7 @@ abstract class Haybase {
     }
 
     private function resize($src, $width, $height, $zc = "1") {
-        return sprintf($this->getTheme() . "/img/timthumb.php?src=%s&amp;w=%s&amp;h=%s&amp;zc=%s",
+        return sprintf($this->pluginUrl . "/timthumb.php?src=%s&amp;w=%s&amp;h=%s&amp;zc=%s",
             $src, $width, $height, $zc
         );
     }
