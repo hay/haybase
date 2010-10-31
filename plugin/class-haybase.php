@@ -7,6 +7,9 @@ abstract class Haybase {
     private $configFile;
     protected $config;
     private $pluginPath, $pluginUrl;
+    private $defaults = array(
+        "defaultcharset" => "utf-8"
+    );
 
     function __construct($configFile = false) {
         if ($configFile) {
@@ -33,7 +36,13 @@ abstract class Haybase {
         $width = ($width) ? $width : $this->config->postthumb->width;
         $height = ($height) ? $height : $this->config->postthumb->height;
 
-        return $this->resize($imgUrl, $width, $height);
+        return $this->getResizeUrl($imgUrl, $width, $height);
+    }
+
+    public function getResizeUrl($src, $width, $height, $zc = "1") {
+        return sprintf($this->pluginUrl . "/timthumb.php?src=%s&amp;w=%s&amp;h=%s&amp;zc=%s",
+            $src, $width, $height, $zc
+        );
     }
 
     public function getPostThumbUrl($id) {
@@ -260,7 +269,7 @@ abstract class Haybase {
     }
 
     public function escape($str) {
-        return htmlentities($str, ENT_QUOTES);
+        return htmlentities($str, ENT_QUOTES, $this->config->defaultcharset);
     }
 
     // Superhandy lightweight template function
@@ -308,6 +317,10 @@ abstract class Haybase {
         $conf = $this->processJavascript($conf);
         $conf = $this->processCss($conf);
 
+        if (!$conf->defaultcharset) {
+            $conf->defaultcharset = $this->defaults['defaultcharset'];
+        }
+
         return $conf;
     }
 
@@ -330,9 +343,31 @@ abstract class Haybase {
         return $conf;
     }
 
-    private function resize($src, $width, $height, $zc = "1") {
-        return sprintf($this->pluginUrl . "/timthumb.php?src=%s&amp;w=%s&amp;h=%s&amp;zc=%s",
-            $src, $width, $height, $zc
-        );
+    private function mb_str_replace($search, $replace, $subject) {
+        if(function_exists('mb_str_replace')) {
+            return mb_str_replace($search, $replace, $subject);
+        } else {
+            if(is_array($subject)) {
+                $ret = array();
+                foreach($subject as $key => $val) {
+                    $ret[$key] = mb_str_replace($search, $replace, $val);
+                }
+                return $ret;
+            }
+
+            foreach((array) $search as $key => $s) {
+                if($s == '') {
+                    continue;
+                }
+                $r = !is_array($replace) ? $replace : (array_key_exists($key, $replace) ? $replace[$key] : '');
+                $pos = mb_strpos($subject, $s);
+                while($pos !== false) {
+                    $subject = mb_substr($subject, 0, $pos) . $r . mb_substr($subject, $pos + mb_strlen($s));
+                    $pos = mb_strpos($subject, $s, $pos + mb_strlen($r));
+                }
+            }
+
+            return $subject;
+        }
     }
 }
