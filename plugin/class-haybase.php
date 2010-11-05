@@ -49,7 +49,7 @@ abstract class Haybase {
         $thumbid = get_post_thumbnail_id($post->ID);
         $img = wp_get_attachment_image_src($thumbid, $size);
         if ($img) {
-            return $img;
+            return $img[0];
         } else if (!$img && $this->config->postthumb->custom_key) {
             // Might have a custom key
             $key = get_post_custom($id);

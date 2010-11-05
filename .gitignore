@@ -1,1 +1,2 @@
-plugin/img/cache/*
+plugin/cache/*
+plugin/temp/*
