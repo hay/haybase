@@ -97,16 +97,15 @@ abstract class Haybase {
             "number" => $limit,
             "status" => "approve"
         ));
-
+        
         $comments = array();
         foreach ($r as $c) {
             $a = array(
-                "author" => get_comment_author(),
-                "author_url" => get_comment_author_url(),
-                "author_link" => get_comment_author_link(),
+                "author" => $c->comment_author,
+                "author_url" => $c->comment_author_url,
                 "link" => get_comment_link($c->comment_ID),
                 "ID" => $c->comment_ID,
-                "text" => $c->comment_content,
+                "text" => $this->escape($c->comment_content),
                 "title" => get_the_title($c->comment_post_ID)
             );
 
