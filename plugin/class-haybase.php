@@ -4,37 +4,23 @@
     Released under the GPL. See LICENSE for information
 */
 abstract class Haybase {
-    private $configFile;
-    protected $config;
-    private $pluginPath, $pluginUrl;
-    private $defaults = array(
-        "defaultcharset" => "utf-8"
-    );
+    private $pluginPath, $pluginUrl, $config;
 
-    function __construct($configFile = false) {
-        if ($configFile) {
-            $this->configFile = $configFile;
-            $this->initWithConfig();
-        }
-
+    function __construct($args) {
         // This is a *little* dirty, but because the plugin's directory
         // could be a symlink, we're doing it this way.
 		$this->pluginPath = WP_CONTENT_DIR . "/plugins/haybase";
 		$this->pluginUrl = WP_CONTENT_URL . "/plugins/haybase";
-    }
-
-    public function initWithConfig() {
-        $this->config = $this->readConfig($this->configFile);
-
         add_theme_support('post-thumbnails');
+        $this->config = $this->readConfig();
     }
-
-    public function getPostThumbResized($id, $width = false, $height = false) {
+    
+    public function getPostThumbResized($id, $width, $height) {
         $imgUrl = $this->getPostThumbUrl($id);
         if (!$imgUrl) return false;
 
-        $width = ($width) ? $width : $this->config->postthumb->width;
-        $height = ($height) ? $height : $this->config->postthumb->height;
+        $width = ($width) ? $width : $this->config->postthumb_width;
+        $height = ($height) ? $height : $this->config->postthumb_height;
 
         return $this->getResizeUrl($imgUrl, $width, $height);
     }
@@ -301,6 +287,11 @@ abstract class Haybase {
 
     protected function halt($msg) {
         die('<h1 style="color:red;">' . $msg . '</h1>');
+    }
+    
+    private function readConfig() {
+        $file = file_get_contents("defaults.json");
+        return json_encode($file);
     }
 
     // Private methods
