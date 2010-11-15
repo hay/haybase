@@ -13,19 +13,25 @@ abstract class Haybase {
 		$this->pluginPath = WP_CONTENT_DIR . "/plugins/haybase";
 		$this->pluginUrl = WP_CONTENT_URL . "/plugins/haybase";
         add_theme_support('post-thumbnails');
+        
         $this->config = $this->readConfig();
-        if ($args) $this->setConfig($args);
+        
+        if ($args) {
+            $this->setConfig($args);
+        }
+        
+        $this->config = (object) $this->config;
     }
 
     public function getConfig() {
         return $this->config;
     }
 
-    public function setConfig($a1, $a2) {
+    public function setConfig($a1, $a2 = false) {
         // If this is an array extend over the current config, else just set
         // one single key
         if (is_array($a1)) {
-            $this->config = $a1;
+            $this->config = array_merge($this->config, $a1);
         } else if (is_string($a1) && is_string($a2)) {
             $this->config->$a1 = $a2;
         }
@@ -52,11 +58,11 @@ abstract class Haybase {
         $img = wp_get_attachment_image_src($thumbid, $size);
         if ($img) {
             return $img[0];
-        } else if (!$img && $this->config->postthumb_custom_key) {
+        } else if (!$img && $this->config->postthumb_customkey) {
             // Might have a custom key
             $key = get_post_custom($id);
-            if ($key[$this->config->postthumb_custom_key]) {
-                return $key[$this->config->postthumb_custom_key][0];
+            if ($key[$this->config->postthumb_customkey]) {
+                return $key[$this->config->postthumb_customkey][0];
             }
         } else {
             return false;
@@ -190,9 +196,27 @@ abstract class Haybase {
     public function bodyClass() {
         echo $this->getBodyClass();
     }
-    
-    public function loadStylesheets(array $style) {
-        
+
+    public function loadStylesheets() {
+        $files = func_get_args();
+        if (empty($files)) return false;
+
+        $files = $this->rewriteExternalFiles($files);
+
+        foreach ($files as $file) {
+            echo '<link rel="stylesheet" href="' . $file . '" />' . "\n";
+        }
+    }
+
+    public function loadJavascripts() {
+        $files = func_get_args();
+        if (empty($files)) return false;
+
+        $files = $this->rewriteExternalFiles($files);
+
+        foreach ($files as $file) {
+            echo '<script src="' . $file . '"></script>' . "\n";
+        }
     }
 
     // This function is virtually identical to pageType, but prefixes the
@@ -295,7 +319,16 @@ abstract class Haybase {
 
     private function readConfig() {
         $file = file_get_contents($this->pluginPath . "/defaults.json");
-        return json_encode($file);
+        return json_decode($file, true);
+    }
+
+    private function rewriteExternalFiles($files) {
+        foreach ($files as &$file) {
+            if (substr($file, 0, 4) != "http") {
+                $file = $this->getTheme() . "/" . $file;
+            }
+        }
+        return $files;
     }
 
     // Private methods
