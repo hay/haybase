@@ -97,7 +97,7 @@ abstract class Haybase {
             "number" => $limit,
             "status" => "approve"
         ));
-        
+
         $comments = array();
         foreach ($r as $c) {
             $a = array(
@@ -292,11 +292,34 @@ abstract class Haybase {
         return $template;
     }
 
+    // Returns <meta> tags with basic Open Graph information
+    // See http://opengraphprotocol.org/
+    // Note that you still need to add the xmlns to your html tag
+    public function openGraphMetaTags() {
+        echo $this->getOpenGraphMetaTags();
+    }
+
     protected function halt($msg) {
         die('<h1 style="color:red;">' . $msg . '</h1>');
     }
 
     // Private methods
+    private function getOpenGraphMetaTags() {
+        global $post;
+        $o  = $this->openGraphMetaTag("title", get_the_title());
+        $o .= $this->openGraphMetaTag("type", "blog");
+        $o .= $this->openGraphMetaTag("url", get_permalink());
+        $o .= $this->openGraphMetaTag("image", $this->getPostThumbResized($post->ID));
+        $o .= $this->openGraphMetaTag("description", get_the_excerpt());
+        return $o;
+    }
+
+    private function openGraphMetaTag($prop, $content) {
+        return sprintf(
+            '<meta property="og:%s" content="%s" />' . "\n",
+            $prop, $content
+        );
+    }
 
     // Gets the haybase.json file and parses it to an array
     private function readConfig($configFile) {
