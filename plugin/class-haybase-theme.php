@@ -4,14 +4,15 @@
     Released under the GPL. See LICENSE for information
 */
 class HaybaseTheme extends Haybase {
-    function __construct($configFile = false) {
-        if ($configFile) {
-            parent::__construct($configFile);
+    /*
+    function __construct($args = false) {
+        if ($args) {
+            parent::__construct($args);
             $this->registerSidebars();
             $this->registerNavMenus();
         }
     }
-    
+
     public function sidebar($id) {
         // Currently this function doesn't do anything fancy, but in the future
         // we might, so this wrapper is already in place
@@ -19,7 +20,7 @@ class HaybaseTheme extends Haybase {
             dynamic_sidebar($id);
         }
     }
-    
+
     public function navMenu($id) {
         if (function_exists('wp_nav_menu')) {
             wp_nav_menu($id);
@@ -28,7 +29,7 @@ class HaybaseTheme extends Haybase {
 
     private function registerSidebars() {
         if (empty($this->config->sidebars->sidebars)) return false;
-        
+
         foreach ($this->config->sidebars->sidebars as $sidebar) {
             register_sidebar(array(
                 "id" => $sidebar->id,
@@ -40,12 +41,13 @@ class HaybaseTheme extends Haybase {
             ));
         }
     }
-    
+
     private function registerNavMenus() {
         if (empty($this->config->menus->menus)) return false;
-        
+
         foreach ($this->config->menus->menus as $menu) {
             register_nav_menu($menu->id, $menu->name);
         }
     }
+    */
 }

@@ -4,23 +4,39 @@
     Released under the GPL. See LICENSE for information
 */
 abstract class Haybase {
-    private $pluginPath, $pluginUrl, $config;
+    private $pluginPath, $pluginUrl;
+    protected $config;
 
-    function __construct($args) {
+    function __construct($args = false) {
         // This is a *little* dirty, but because the plugin's directory
         // could be a symlink, we're doing it this way.
 		$this->pluginPath = WP_CONTENT_DIR . "/plugins/haybase";
 		$this->pluginUrl = WP_CONTENT_URL . "/plugins/haybase";
         add_theme_support('post-thumbnails');
         $this->config = $this->readConfig();
+        if ($args) $this->setConfig($args);
     }
-    
-    public function getPostThumbResized($id, $width, $height) {
+
+    public function getConfig() {
+        return $this->config;
+    }
+
+    public function setConfig($a1, $a2) {
+        // If this is an array extend over the current config, else just set
+        // one single key
+        if (is_array($a1)) {
+            $this->config = $a1;
+        } else if (is_string($a1) && is_string($a2)) {
+            $this->config->$a1 = $a2;
+        }
+    }
+
+    public function getPostThumbResized($id, $width = false, $height = false) {
         $imgUrl = $this->getPostThumbUrl($id);
         if (!$imgUrl) return false;
 
-        $width = ($width) ? $width : $this->config->postthumb_width;
-        $height = ($height) ? $height : $this->config->postthumb_height;
+        $width = (isset($width)) ? $width : $this->config->postthumb_width;
+        $height = (isset($height)) ? $height : $this->config->postthumb_height;
 
         return $this->getResizeUrl($imgUrl, $width, $height);
     }
@@ -36,11 +52,11 @@ abstract class Haybase {
         $img = wp_get_attachment_image_src($thumbid, $size);
         if ($img) {
             return $img[0];
-        } else if (!$img && $this->config->postthumb->custom_key) {
+        } else if (!$img && $this->config->postthumb_custom_key) {
             // Might have a custom key
             $key = get_post_custom($id);
-            if ($key[$this->config->postthumb->custom_key]) {
-                return $key[$this->config->postthumb->custom_key][0];
+            if ($key[$this->config->postthumb_custom_key]) {
+                return $key[$this->config->postthumb_custom_key][0];
             }
         } else {
             return false;
@@ -99,17 +115,6 @@ abstract class Haybase {
         }
 
         return $comments;
-    }
-
-    public function hasJsLib($lib) {
-        return in_array($lib, $this->config->javascript->libs);
-    }
-
-    public function jsFilesAsScriptTags() {
-        if (!$this->config->javascript->files) return false;
-        foreach ($this->config->javascript->files as $js) {
-            printf('<script src="%s"></script>' . "\n", $js);
-        }
     }
 
     // Easy shortcuts to commonly used variables
@@ -185,6 +190,10 @@ abstract class Haybase {
     public function bodyClass() {
         echo $this->getBodyClass();
     }
+    
+    public function loadStylesheets(array $style) {
+        
+    }
 
     // This function is virtually identical to pageType, but prefixes the
     // '404' as 'p404' because CSS classes that start with a number are invalid
@@ -248,11 +257,6 @@ abstract class Haybase {
         return get_the_tag_list('', ', ');
     }
 
-    // Other stuff
-    public function getConfig() {
-        return $this->config;
-    }
-
     public function escape($str) {
         return htmlentities($str, ENT_QUOTES, $this->config->defaultcharset);
     }
@@ -288,9 +292,9 @@ abstract class Haybase {
     protected function halt($msg) {
         die('<h1 style="color:red;">' . $msg . '</h1>');
     }
-    
+
     private function readConfig() {
-        $file = file_get_contents("defaults.json");
+        $file = file_get_contents($this->pluginPath . "/defaults.json");
         return json_encode($file);
     }
 
@@ -310,77 +314,5 @@ abstract class Haybase {
             '<meta property="og:%s" content="%s" />' . "\n",
             $prop, $content
         );
-    }
-
-    // Gets the haybase.json file and parses it to an array
-    private function readConfig($configFile) {
-        $file = file_get_contents($configFile);
-
-        if (!$file) {
-            $this->halt("Could not read configuration file. Is HAYBASE_CONFIG_FILE set correctly?");
-        }
-
-        $conf = json_decode($file);
-        if (!$conf) {
-            $this->halt("Could not decode JSON. Is it valid? Try jsonlint.com!");
-        }
-
-        // Preprocess some of the configuration options so we don't need to
-        // call extra methods in the implementation files
-        $conf = $this->processJavascript($conf);
-        $conf = $this->processCss($conf);
-
-        if (!$conf->defaultcharset) {
-            $conf->defaultcharset = $this->defaults['defaultcharset'];
-        }
-
-        return $conf;
-    }
-
-    private function rewriteExternalFiles($files) {
-        foreach ($files as &$file) {
-            if (substr($file, 0, 4) != "http") {
-                $file = $this->getTheme() . "/" . $file;
-            }
-        }
-        return $files;
-    }
-
-    private function processJavascript($conf) {
-        $conf->javascript->files = $this->rewriteExternalFiles($conf->javascript->files);
-        return $conf;
-    }
-
-    private function processCss($conf) {
-        $conf->css->files = $this->rewriteExternalFiles($conf->css->files);
-        return $conf;
-    }
-
-    private function mb_str_replace($search, $replace, $subject) {
-        if(function_exists('mb_str_replace')) {
-            return mb_str_replace($search, $replace, $subject);
-        } else {
-            if(is_array($subject)) {
-                $ret = array();
-                foreach($subject as $key => $val) {
-                    $ret[$key] = mb_str_replace($search, $replace, $val);
-                }
-                return $ret;
-            }
-
-            foreach((array) $search as $key => $s) {
-                if($s == '') {
-                    continue;
-                }
-                $r = !is_array($replace) ? $replace : (array_key_exists($key, $replace) ? $replace[$key] : '');
-                $pos = mb_strpos($subject, $s);
-                while($pos !== false) {
-                    $subject = mb_substr($subject, 0, $pos) . $r . mb_substr($subject, $pos + mb_strlen($s));
-                    $pos = mb_strpos($subject, $s, $pos + mb_strlen($r));
-                }
-            }
-
-            return $subject;
-        }
     }
 }

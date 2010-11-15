@@ -4,14 +4,16 @@
     Released under the GPL. See LICENSE for information
 */
 class HaybasePlugin extends Haybase {
+    /*
     protected $config;
     private $pluginname, $path, $url;
 
-    function __construct($configFile, $pluginname = "haybase") {
-        parent::__construct($configFile);
+    function __construct($args = false) {
+        parent::__construct($args);
         
         $this->pluginname = $pluginname;
         $this->path = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $this->pluginname;
         $this->url = WP_PLUGIN_URL . "/" . $this->pluginname;
     }
+    */
 }
