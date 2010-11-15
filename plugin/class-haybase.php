@@ -13,13 +13,13 @@ abstract class Haybase {
 		$this->pluginPath = WP_CONTENT_DIR . "/plugins/haybase";
 		$this->pluginUrl = WP_CONTENT_URL . "/plugins/haybase";
         add_theme_support('post-thumbnails');
-        
+
         $this->config = $this->readConfig();
-        
+
         if ($args) {
             $this->setConfig($args);
         }
-        
+
         $this->config = (object) $this->config;
     }
 
@@ -334,18 +334,23 @@ abstract class Haybase {
     // Private methods
     private function getOpenGraphMetaTags() {
         global $post;
-        $o  = $this->openGraphMetaTag("title", get_the_title());
-        $o .= $this->openGraphMetaTag("type", "blog");
-        $o .= $this->openGraphMetaTag("url", get_permalink());
-        $o .= $this->openGraphMetaTag("image", $this->getPostThumbResized($post->ID));
-        $o .= $this->openGraphMetaTag("description", get_the_excerpt());
-        return $o;
-    }
 
-    private function openGraphMetaTag($prop, $content) {
-        return sprintf(
-            '<meta property="og:%s" content="%s" />' . "\n",
-            $prop, $content
+        $opts = array(
+            "title" => get_the_title(),
+            "type" => "blog",
+            "url" => get_permalink(),
+            "image" => $this->getPostThumbResized($post->ID),
+            "description" => get_the_excerpt()
         );
+
+        $o = "";
+        foreach ($opts as $key => $value) {
+            $o .= sprintf(
+                '<meta property="og:%s" content="%s" />' . "\n",
+                $key, $value
+            );
+        }
+
+        return $o;
     }
 }
