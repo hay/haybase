@@ -1,34 +1,30 @@
 Haybase
 =======
-**A new object-orientated PHP5 theme framework for WordPress, by Hay Kranen**
+**Makes developing WordPress plugins and themes infinitely more easy**
 
-If you're like me, you like clean object-orientated modern PHP5 code.
-Unfortunately 99% of all WordPress themes and plugins (including the core
-itself) is not OO at all, in fact, it's a mess. Mixing of code and HTML, using
-endless functions instead of classes, repetition of large blocks of code. Does
-this sound familiar to you? It makes developing a clean theme a lot of work,
-because there is no good foundation.
+If you have ever written a WordPress theme or plugin you probably noticed that
+a lot of the code seems repetitive and alike. Of course, you can copy-paste
+stuff from the standard themes, but is that really the right way to write a theme?
 
-If you're like me, you will therefore love Haybase, a great starting point for
-your new HTML5 WordPress theme, with all the building blocks you need when
-developing a great new theme.
+Haybase provides an easy interface to many features of WordPress. Writing very 
+simple, nice object-orientated PHP5, you can add stuff like post thumbnails, 
+Facebook Open Graph data, or a list of recent comments.
 
 Features
 --------
-* Clean, object-orientated, PHP5 code with classes instead of
-  endlessly_long_function_names_with_lots_of_underscores_and_prefixes
-* HTML5 from the ground up, no useless XHTML namespaces and other stuff you
-  don't need.
-* Timthumb image resize script for post thumbnails
-* Loads Javascripts at the bottom of the page with a Javascript loader,
-  to speed up your site
-* Easy inclusion of Javascript / CSS files without changing the templates
-* HTML5 CSS reset
-* Easy addition of sidebars / widget areas
-* Configuration by a JSON file instead of PHP constants or global variables
-* Easy ways to access common variables in your theme
+* Timthumb image resize script for post thumbnails (or any other image)
+* Simple way to get an array with your
+    * Recent posts
+    * Recent comments
+* Easy ways to access common variables in your theme (such as the theme directory)
+* Helper scripts for adding CSS styles and Javascript
+* Get the page type
+* Lightweight template functionality
+* Easy adding of Facebook Open Graph metadata to your page
 * Utility functions for commonly used stuff
 * Open source, GPL licensed. Just like WordPress itself.
+* Clean, object-orientated, PHP5 code with classes instead of
+  endlessly_long_function_names_with_lots_of_underscores_and_prefixes
 
 Requirements
 ------------
@@ -45,12 +41,6 @@ Mail me: hay@bykr.org
 
 FAQ
 ---
-*I don't get it. I installed your theme and now i get unformatted pages.
-What's the deal?*
-
-Haybase is not ment as a production-ready theme you can install to make your
-blog look pretty. It's a starting point to make your own theme.
-
 *What's this `$T` i see everywhere in the code?*
 
 `$T` is the global variable that has the instance of the current theme class.
@@ -67,38 +57,25 @@ new theme is to start from scratch. However, many lower-level functions are
 very common amongs themes, and Haybase provides a nice interface and starting
 point for those functions.
 
-*How do i upgrade?*
-
-All of Haybase's core files are in the `haybase` directory. Hopefully i won't 
-change the interface too much, but note that this is pre-alpha software in active
-development, so things might change rapidly. Also, to take advantage of new 
-features you probably need to add or change things in your haybase.json file and 
-add stuff in your theme using the `$T` object.
-
-*Where's (something.php) in your theme? It's included in twentyten/kubrick!*
-
-You don't need all files for every site. A theme actually only needs two files:
-style.css and index.php. WordPress can figure out most 'types' from only an
-index.php file. This saves in maintenance, so only make pages for 'page types'
-you really need.
-
-*I get a 'Could not decode JSON' error!*
-
-The haybase.json the root of your theme folder should be valid. Check for 
-missing commas and quotes. 
-Copy-paste your file in [jsonlint] to figure out what's wrong.
-
-*Why bother with WordPress at all? Why not use a proper coded CMS such as 
+*Why bother with WordPress at all? Why not use a proper coded CMS such as
 (insert name here)?*
 
-Many people know WordPress, and the ui is pretty nice. There are thousands of 
-plugins available, and it runs on virtually any web host. 
+Many people know WordPress, and the ui is pretty nice. There are thousands of
+plugins available, and it runs on virtually any web host.
+
+*What's wrong with the current way of using the WordPress API?*
+If you're like me, you like clean object-orientated modern PHP5 code.
+Unfortunately 99% of all WordPress themes and plugins (including the core
+itself) is not OO at all, in fact, it's a mess. Mixing of code and HTML, using
+endless functions instead of classes, repetition of large blocks of code. Does
+this sound familiar to you? It makes developing a clean theme a lot of work,
+because there is no good foundation.
 
 *Are there any examples of (free) themes using Haybase i can download, study
 and use?*
 
-Haybase is very new software, so no themes that i know of have been built. 
-If you have build a theme using Haybase that is free, please let me know so i 
+Haybase is very new software, so no themes that i know of have been built.
+If you have build a theme using Haybase that is free, please let me know so i
 can add it to a list in this file and on the website!
 
 *I build a theme using Haybase, what do you think of it?*
@@ -109,11 +86,8 @@ TODO
 ----
 Cool stuff in the near feature (fork on Github and contribute if you want!)
 
-* Configuration of theme options page (easily create a theme options page for 
+* Configuration of theme options page (easily create a theme options page for
   your theme.
-* Move haybase.json options to that theme page (maybe?, might be a bit heavy on
-  the db.
-* Make something similar for plugins
 * Support for Haybase addons / extensions
 * Let Haybase make coffee and do your dishes (nah, not really ;)
 
@@ -121,10 +95,7 @@ Thank you
 ---------
 Haybase includes code from:
 
-* html5reset: http://html5reset.org/
-* html5boilerplate: http://html5boilerplate.com/
 * timthumb: http://code.google.com/p/timthumb/
-* jsDynaLoad: http://www.haykranen.nl/projects/jsdynaload
 
 [docs]: http://www.haykranen.nl/projects/haybase
 [jsonlint]: http://www.jsonlint.com
