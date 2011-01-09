@@ -313,6 +313,24 @@ abstract class Haybase {
         echo $this->getOpenGraphMetaTags();
     }
 
+    public function rewriteExternalFile($file) {
+        if (substr($file, 0, 4) != "http") {
+            // Remove possible slash, because we're going to add that anyway
+            if ($file[0] == "/") $file = substr($file, 1);
+
+            $file = $this->getTheme() . "/" . $file;
+        }
+
+        return $file;
+    }
+
+    public function rewriteExternalFiles($files) {
+        foreach ($files as &$file) {
+            $file = $this->rewriteExternalFile($file);
+        }
+        return $files;
+    }
+
     protected function halt($msg) {
         die('<h1 style="color:red;">' . $msg . '</h1>');
     }
@@ -320,15 +338,6 @@ abstract class Haybase {
     private function readConfig() {
         $file = file_get_contents($this->pluginPath . "/defaults.json");
         return json_decode($file, true);
-    }
-
-    private function rewriteExternalFiles($files) {
-        foreach ($files as &$file) {
-            if (substr($file, 0, 4) != "http") {
-                $file = $this->getTheme() . "/" . $file;
-            }
-        }
-        return $files;
     }
 
     // Private methods

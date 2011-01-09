@@ -14,6 +14,10 @@ class HaybaseThemePage {
     public function __construct($conf, $haybase) {
         $this->conf = $conf;
         $this->haybase = $haybase;
+        
+        if (isset($this->conf['options'])) {
+            $this->addOptions($this->conf['options']);
+        }
 
         // Generate a id from the title, so we can save all
         // options under that name in the options table
@@ -66,7 +70,8 @@ class HaybaseThemePage {
 
     public function getOption($id) {
         $opt = $this->options[$id];
-        if ($opt['value']) {
+
+        if (isset($opt['value'])) {
             return $opt['value'];
         } else if ($opt['default']) {
             return $opt['default'];
@@ -100,10 +105,10 @@ class HaybaseThemePage {
         $dbOpts = get_option($this->pageId);
 
         foreach ($this->options as $id => &$opt) {
-            if ($dbOpts[$id]) {
+            if (isset($dbOpts[$id])) {
                 $opt['value'] = $dbOpts[$id];
             }
-        }
+        }        
     }    
 
     private function getValueHtml($id, $opt) {
@@ -160,7 +165,7 @@ class HaybaseThemePage {
                 $toSave[$id] = $_POST[$id];
             }
         }
-
+        
         update_option($this->pageId, $toSave);
     }
 

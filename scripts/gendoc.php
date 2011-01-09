@@ -1,3 +1,4 @@
+<pre>
 <?php
     $file = file_get_contents("../src/class-haybase.php");
     preg_match_all("/public function (.*) {/", $file, $matches);
