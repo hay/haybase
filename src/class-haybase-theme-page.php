@@ -14,7 +14,7 @@ class HaybaseThemePage {
     public function __construct($conf, $haybase) {
         $this->conf = $conf;
         $this->haybase = $haybase;
-        
+
         if (isset($this->conf['options'])) {
             $this->addOptions($this->conf['options']);
         }
@@ -100,7 +100,7 @@ class HaybaseThemePage {
             "table" => $table
         ));
     }
-    
+
     public function loadOptions() {
         $dbOpts = get_option($this->pageId);
 
@@ -108,8 +108,8 @@ class HaybaseThemePage {
             if (isset($dbOpts[$id])) {
                 $opt['value'] = $dbOpts[$id];
             }
-        }        
-    }    
+        }
+    }
 
     private function getValueHtml($id, $opt) {
         // If no type is available, default to 'text'
@@ -162,10 +162,13 @@ class HaybaseThemePage {
 
         foreach ($this->options as $id => $opt) {
             if (isset($_POST[$id])) {
-                $toSave[$id] = $_POST[$id];
+                // Strip stupid magic quotes
+                $value = (get_magic_quotes_gpc()) ? stripslashes($_POST[$id]) : $_POST[$id];
+
+                $toSave[$id] = $value;
             }
         }
-        
+
         update_option($this->pageId, $toSave);
     }
 
