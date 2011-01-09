@@ -52,9 +52,9 @@ class HaybaseThemePage {
                 $this->statusMessage = false;
                 break;
         }
-        
+
         // Load all options from the database
-        $this->loadOptions();        
+        $this->loadOptions();
     }
 
     public function getOptions() {
@@ -77,58 +77,51 @@ class HaybaseThemePage {
         $this->showStatusMessage();
 
         // First build the option table
-        $table = array();
+        $table = "";
+
         foreach($this->options as $id => $opt) {
-            // The option should have a title, else don't show it
-            if (!isset($opt['title'])) {
-                continue;
-            } else {
-                $title = $opt['title'];
-            }
+            $table .= $this->template("row", array(
+                "title" => $opt['title'],
+                "value" => $this->getValueHtml($id, $opt),
+                "description" => ($opt['description']) ? $opt['description'] : ""
+            ));
+        }
 
-            // Get some standard values
-            $default = (isset($opt['default'])) ? $opt['default'] : "";
-            // If no type is available, default to 'text'
-            $type = (isset($opt['type'])) ? $opt['type'] : "text";
-
-
-        	$table[] = "<tr>";
-        	$table[] = "<td nowrap>$title</td>";
-
-        	// Get the setting from the db
-        	$table[] = '<td>';
-        	$setting = $this->getOption($id);
-
-        	switch($value['type']) {
-        	   case "textarea":
-                	$line  = '<textarea name="' . $id . '" id="' . $id . '" ';
-                	$line .= 'rows="10" cols="50">' . $setting . '</textarea>';
-                	$table[] = $line;
-                	break;
-            	case "radioshowhide":
-                    foreach(array("hide", "show") as $type) {
-                    	$line  = '<input name="'  . $id . '" id="' . $id . '" ';
-                    	$line .= 'type="radio" value="' . $type . '"';
-                    	$line .= ($setting == $type) ? 'checked="checked"' : '';
-                    	$line .= " /> $type ";
-                        $table[] = $line;
-                    }
-                	break;
-            	default:
-                   	$line  = '<input name="'  . $id . '" id="' . $id . '" ';
-                   	$line .= 'type="text" value="' . $setting . '" size="50" />';
-                   	$table[] = $line;
-                	break;
-        	}
-            $table[] = "</td>";
-            $table[] = "</tr>";
-    	}
-    	$table = implode("\n", $table);
-
-        echo $this->haybase->parseTemplate($this->haybase->pluginPath . "/templates/adminpage.html", array(
+        echo $this->template("page", array(
             "title" => $this->conf['title'],
             "table" => $table
         ));
+    }
+
+    private function getValueHtml($id, $opt) {
+        // If no type is available, default to 'text'
+        $type = (isset($opt['type'])) ? $opt['type'] : "text";
+        $setting = $this->getOption($id);
+        $value = false;
+
+        switch($type) {
+            case "textarea":
+                $value = $this->template("textarea", array(
+                    "id" => $id,
+                    "setting" => $setting
+                ));
+                break;
+            case "text":
+                $value = $this->template("text", array(
+                    "id" => $id,
+                    "setting" => $setting
+                ));
+        }
+
+        return $value;
+    }
+
+    // Nothing more than a simple wrapper to save typing
+    private function template($name, $args) {
+        return $this->haybase->parseTemplate(
+            $this->haybase->pluginPath . "/templates/themepage/$name.html",
+            $args
+        );
     }
 
     private function loadOptions() {
