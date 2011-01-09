@@ -287,7 +287,7 @@ abstract class Haybase {
 
     // Superhandy lightweight template function
     public function parseTemplate($file, $options) {
-        $template = @file_get_contents($file);
+        $template = file_get_contents($file);
         if (!$template) {
             return false;
         }
