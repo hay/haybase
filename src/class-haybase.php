@@ -4,7 +4,7 @@
     Released under the GPL. See LICENSE for information
 */
 abstract class Haybase {
-    private $pluginPath, $pluginUrl;
+    public $pluginPath, $pluginUrl;
     protected $config;
 
     function __construct($args = false) {

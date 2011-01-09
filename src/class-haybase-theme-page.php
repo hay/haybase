@@ -14,7 +14,7 @@ class HaybaseThemePage {
     public function __construct($conf, $haybase) {
         $this->conf = $conf;
         $this->haybase = $haybase;
-        
+
         add_action('admin_menu', array($this, "handleAdminPage"));
     }
 
@@ -23,15 +23,16 @@ class HaybaseThemePage {
         $this->options = array_merge($this->options, $opts);
     }
 
-    public function handleAdminPage() {        
+    public function handleAdminPage() {
         add_theme_page(
-            $this->conf->title,
-            $this->conf->title,
+            $this->conf['title'],
+            $this->conf['title'],
             'edit_themes',
             "edit-basic-simplicity",
             array($this, 'showAdminPage')
-        );        
-        
+        );
+
+
         switch($_POST['action']) {
             case "save":
                 $this->saveOptions();
@@ -101,8 +102,8 @@ class HaybaseThemePage {
     	}
     	$table = implode("\n", $table);
 
-        echo $this->haybase->parseTemplate($this->path . "templates/adminpage.html", array(
-            "title" => $this->conf->title,
+        echo $this->haybase->parseTemplate($this->haybase->pluginPath . "/templates/adminpage.html", array(
+            "title" => $this->conf['title'],
             "table" => $table
         ));
     }
