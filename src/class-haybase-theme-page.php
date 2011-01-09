@@ -98,19 +98,31 @@ class HaybaseThemePage {
         $type = (isset($opt['type'])) ? $opt['type'] : "text";
         $setting = $this->getOption($id);
         $value = false;
+        $defaultTemplateValues = array(
+            "id" => $id,
+            "setting" => $setting
+        );
 
         switch($type) {
             case "textarea":
-                $value = $this->template("textarea", array(
-                    "id" => $id,
-                    "setting" => $setting
-                ));
+                $value = $this->template("textarea", $defaultTemplateValues);
                 break;
             case "text":
-                $value = $this->template("text", array(
-                    "id" => $id,
-                    "setting" => $setting
-                ));
+                $value = $this->template("text", $defaultTemplateValues);
+                break;
+            case "select":
+                $options = "";
+                foreach ($opt['data'] as $key => $val) {
+                    $selected = ( ($key == $opt['value']) || ($key == $opt['default']) && empty($opt['value']))  ? "selected" : "";
+                    $options .= sprintf(
+                        '<option value="%s" %s>%s</option>',
+                        $key, $selected, $val
+                    );
+                }
+                $value = sprintf(
+                    '<select name="%s">%s</select>',
+                    $id, $options
+                );
         }
 
         return $value;
