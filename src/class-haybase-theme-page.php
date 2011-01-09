@@ -21,6 +21,12 @@ class HaybaseThemePage {
 
         add_action('admin_menu', array($this, "addThemePage"));
         add_action('admin_menu', array($this, "handleActions"));
+
+        if (is_admin()) {
+            add_action('admin_menu', array($this, "loadOptions"));
+        } else {
+            add_action('init', array($this, "loadOptions"));
+        }
     }
 
     // Add instead of set, so we can dynamically add options on the fly
@@ -52,9 +58,6 @@ class HaybaseThemePage {
                 $this->statusMessage = false;
                 break;
         }
-
-        // Load all options from the database
-        $this->loadOptions();
     }
 
     public function getOptions() {
@@ -92,6 +95,16 @@ class HaybaseThemePage {
             "table" => $table
         ));
     }
+    
+    public function loadOptions() {
+        $dbOpts = get_option($this->pageId);
+
+        foreach ($this->options as $id => &$opt) {
+            if ($dbOpts[$id]) {
+                $opt['value'] = $dbOpts[$id];
+            }
+        }
+    }    
 
     private function getValueHtml($id, $opt) {
         // If no type is available, default to 'text'
@@ -113,6 +126,8 @@ class HaybaseThemePage {
             case "select":
                 $options = "";
                 foreach ($opt['data'] as $key => $val) {
+                    // Handle selected state: when either the value is set, or
+                    // no value is set but there is a default value
                     $selected = ( ($key == $opt['value']) || ($key == $opt['default']) && empty($opt['value']))  ? "selected" : "";
                     $options .= sprintf(
                         '<option value="%s" %s>%s</option>',
@@ -134,16 +149,6 @@ class HaybaseThemePage {
             $this->haybase->pluginPath . "/templates/themepage/$name.html",
             $args
         );
-    }
-
-    private function loadOptions() {
-        $dbOpts = get_option($this->pageId);
-
-        foreach ($this->options as $id => &$opt) {
-            if ($dbOpts[$id]) {
-                $opt['value'] = $dbOpts[$id];
-            }
-        }
     }
 
     private function saveOptions() {
@@ -168,5 +173,4 @@ class HaybaseThemePage {
         $message = $this->statusMessages[$this->statusMessage];
         echo '<div id="message" class="updated fade"><p><strong>' . $message . '</strong></p></div>';
     }
-
 }
