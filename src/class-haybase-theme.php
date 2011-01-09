@@ -4,9 +4,21 @@
     Released under the GPL. See LICENSE for information
 */
 class HaybaseTheme extends Haybase {
+    private $themepage;
+    
     public function newThemePage($opts) {
-        return new HaybaseThemePage($opts, $this);
+        $this->themepage = new HaybaseThemePage($opts, $this);
+        return $this->themepage;
     }
+    
+    public function getThemeOption($id) {
+        return $this->themepage->getOption($id);
+    }
+    
+    public function getThemeOptions() {
+        return $this->themepage->getOptions();
+    }
+        
     /*
     function __construct($args = false) {
         if ($args) {

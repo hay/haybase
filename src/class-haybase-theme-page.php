@@ -5,7 +5,7 @@
  *   Released under the GPL. See LICENSE for information
  */
 class HaybaseThemePage {
-    private $conf, $options = array(), $haybase, $statusMessage = false;
+    private $conf, $options = array(), $haybase, $statusMessage = false, $pageId;
     private $statusMessages = array(
         "saved" => "Your settings have been saved!",
         "reset" => "This theme has been reset"
@@ -15,7 +15,12 @@ class HaybaseThemePage {
         $this->conf = $conf;
         $this->haybase = $haybase;
 
-        add_action('admin_menu', array($this, "handleAdminPage"));
+        // Generate a id from the title, so we can save all
+        // options under that name in the options table
+        $this->pageId = sanitize_title($this->conf['title']);
+
+        add_action('admin_menu', array($this, "addThemePage"));
+        add_action('admin_menu', array($this, "handleActions"));
     }
 
     // Add instead of set, so we can dynamically add options on the fly
@@ -23,16 +28,17 @@ class HaybaseThemePage {
         $this->options = array_merge($this->options, $opts);
     }
 
-    public function handleAdminPage() {
+    public function addThemePage() {
         add_theme_page(
             $this->conf['title'],
             $this->conf['title'],
             'edit_themes',
-            "edit-basic-simplicity",
+            $this->pageId,
             array($this, 'showAdminPage')
         );
+    }
 
-
+    public function handleActions() {
         switch($_POST['action']) {
             case "save":
                 $this->saveOptions();
@@ -46,6 +52,24 @@ class HaybaseThemePage {
                 $this->statusMessage = false;
                 break;
         }
+        
+        // Load all options from the database
+        $this->loadOptions();        
+    }
+
+    public function getOptions() {
+        return $this->options;
+    }
+
+    public function getOption($id) {
+        $opt = $this->options[$id];
+        if ($opt['value']) {
+            return $opt['value'];
+        } else if ($opt['default']) {
+            return $opt['default'];
+        } else {
+            return false;
+        }
     }
 
     public function showAdminPage() {
@@ -54,13 +78,12 @@ class HaybaseThemePage {
 
         // First build the option table
         $table = array();
-        foreach($this->options as $opt) {
-            // The option should have a name, else don't show it
-            if (!isset($opt['title']) || !isset($opt['id'])) {
+        foreach($this->options as $id => $opt) {
+            // The option should have a title, else don't show it
+            if (!isset($opt['title'])) {
                 continue;
             } else {
                 $title = $opt['title'];
-                $id = $opt['id'];
             }
 
             // Get some standard values
@@ -74,7 +97,7 @@ class HaybaseThemePage {
 
         	// Get the setting from the db
         	$table[] = '<td>';
-        	$setting = stripslashes(get_option($id, $default));
+        	$setting = $this->getOption($id);
 
         	switch($value['type']) {
         	   case "textarea":
@@ -108,20 +131,31 @@ class HaybaseThemePage {
         ));
     }
 
-    private function saveOptions() {
-        foreach ($this->options as $id => $value) {
-            if(isset($_POST[$id])) {
-                update_option($id, $_POST[$id]);
-            } else {
-                delete_option($id);
+    private function loadOptions() {
+        $dbOpts = get_option($this->pageId);
+
+        foreach ($this->options as $id => &$opt) {
+            if ($dbOpts[$id]) {
+                $opt['value'] = $dbOpts[$id];
             }
         }
     }
 
-    private function resetOptions() {
-        foreach ($this->options as $id => $value) {
-            delete_option($id);
+    private function saveOptions() {
+        // First convert to simple key->value array
+        $toSave = array();
+
+        foreach ($this->options as $id => $opt) {
+            if (isset($_POST[$id])) {
+                $toSave[$id] = $_POST[$id];
+            }
         }
+
+        update_option($this->pageId, $toSave);
+    }
+
+    private function resetOptions() {
+        delete_option($this->pageId);
     }
 
     private function showStatusMessage() {
