@@ -1,0 +1,49 @@
+<style type="text/css">
+    th {
+        background:#cccccc;
+    }
+
+    td {
+        background:#eeeeee;
+    }
+
+    th, td {
+        padding:4px;
+    }
+</style>
+
+<div class="wrap">
+    <div id="icon-themes" class="icon32"><br /></div>
+    <h2>Manage Themes</h2>
+    <h3>{title}</h3>
+    <div id="current-theme">
+        <form method="post">
+            <fieldset>
+                <table border="0" cellpadding="4" cellspacing="1">
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                    </tr>
+                    {table}
+                </table>
+                <p>
+                    <input type="hidden" name="action" value="save" />
+                    <input type="submit" name="submit" value="Save" style="font-weight:bold; font-size:120%;" />
+                </p>
+            </fieldset>
+        </form>
+
+        <form method="post" style="margin-top:100px; padding:10px; background-color:#ccc;">
+            <fieldset>
+                <p style="color:#900;">
+                    <strong>Warning: All your edits will be lost if you reset back to the default settings.</strong>
+                </p>
+                <p>
+                    <input type="hidden" name="action" value="reset" />
+                    <input type="submit" name="reset" value="Reset to Default Settings" style="color:#999;" onclick="return confirm('Are you sure? This will delete all your values');" />
+                </p>
+            </fieldset>
+         </form>
+     </div> <!-- /#current-theme -->
+ </div> <!-- /.wrap -->
