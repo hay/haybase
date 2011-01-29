@@ -8,7 +8,8 @@ stuff from the standard themes, but is that really the right way to write a them
 
 Haybase provides an easy interface to many features of WordPress. Writing very 
 simple, nice object-orientated PHP5, you can add stuff like post thumbnails, 
-Facebook Open Graph data, or a list of recent comments.
+Facebook Open Graph data, minified javascripts, theme options pages or a 
+list of recent comments.
 
 Features
 --------
@@ -18,8 +19,10 @@ Features
     * Recent comments
 * Easy ways to access common variables in your theme (such as the theme directory)
 * Helper scripts for adding CSS styles and Javascript
+* Automatically minify Javascript
 * Get the page type
 * Lightweight template functionality
+* Add theme option pages
 * Easy adding of Facebook Open Graph metadata to your page
 * Utility functions for commonly used stuff
 * Open source, GPL licensed. Just like WordPress itself.
@@ -64,7 +67,7 @@ Many people know WordPress, and the ui is pretty nice. There are thousands of
 plugins available, and it runs on virtually any web host.
 
 *What's wrong with the current way of using the WordPress API?*
-If you're like me, you like clean object-orientated modern PHP5 code.
+PHP5 provides plenty of ways to write clean object-orientated code.
 Unfortunately 99% of all WordPress themes and plugins (including the core
 itself) is not OO at all, in fact, it's a mess. Mixing of code and HTML, using
 endless functions instead of classes, repetition of large blocks of code. Does
@@ -86,8 +89,6 @@ TODO
 ----
 Cool stuff in the near feature (fork on Github and contribute if you want!)
 
-* Configuration of theme options page (easily create a theme options page for
-  your theme.
 * Support for Haybase addons / extensions
 * Let Haybase make coffee and do your dishes (nah, not really ;)
 
@@ -96,6 +97,7 @@ Thank you
 Haybase includes code from:
 
 * timthumb: http://code.google.com/p/timthumb/
+* JSMin+: http://crisp.tweakblogs.net/blog/1665/a-new-javascript-minifier-jsmin+.html
 
 [docs]: http://www.haykranen.nl/projects/haybase
 [jsonlint]: http://www.jsonlint.com
