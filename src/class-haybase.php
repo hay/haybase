@@ -195,68 +195,56 @@ abstract class Haybase {
         }
     }
 
-    public function bodyClass() {
-        echo $this->getBodyClass();
+    /* CSS / JS loaders */
+    public function getMinifiedStylesheets($args = false) {
+        $files = (is_array($args)) ? $args : func_get_args();
+        return $this->minifyFiles($files, "css");
     }
 
-    public function loadStylesheets() {
-        $files = func_get_args();
-        if (empty($files)) return false;
+    public function loadMinifiedStylesheets($args = false) {
+        $files = (is_array($args)) ? $args : func_get_args();
+        $this->writeStylesheets($this->getMinifiedStylesheets($files));
+    }
 
-        $files = $this->rewriteExternalFiles($files);
+    public function getStylesheets($args = false) {
+        $files = (is_array($args)) ? $args : func_get_args();
+        return($this->rewriteExternalFiles($files));
+    }
 
-        foreach ($files as $file) {
-            echo '<link rel="stylesheet" href="' . $file . '" />' . "\n";
+    public function loadStylesheets($args = false) {
+        $files = (is_array($args)) ? $args : func_get_args();
+        $this->writeStylesheets($this->getStylesheets($files));
+    }
+
+    public function getMinifiedJavascripts($args = false) {
+        $files = (is_array($args)) ? $args : func_get_args();
+        return $this->minifyFiles($files, "js");
+    }
+
+    public function loadMinifiedJavascripts($args = false) {
+        $files = (is_array($args)) ? $args : func_get_args();
+        $this->writeJavascripts($this->getMinifiedJavascripts($files));
+    }
+
+    public function getJavascripts($args = false) {
+        $files = (is_array($args)) ? $args : func_get_args();
+        return($this->rewriteExternalFiles($files));
+    }
+
+    public function loadJavascripts($args = false) {
+        $files = (is_array($args)) ? $args : func_get_args();
+        $this->writeJavascripts($this->getJavascripts($files));
+    }
+
+    public function rewriteExternalFile($file) {
+        if (substr($file, 0, 4) != "http") {
+            // Remove possible slash, because we're going to add that anyway
+            if ($file[0] == "/") $file = substr($file, 1);
+
+            $file = $this->getTheme() . "/" . $file;
         }
-    }
 
-    public function getMinifiedJavascripts($files = false) {
-        if (!$files) $files = func_get_args();
-        if (empty($files)) return false;
-
-        $files = $this->rewriteExternalFiles($files);
-
-        // Check if a cache version already exists for these files
-        $filename = md5(implode($files)) . ".js";
-        $filepath = $this->cachePath . "/js/$filename";
-        $fileurl = $this->cacheUrl . "/js/$filename";
-
-        // You can purge the cache by adding a ?purgejscache=1 to the URL
-        if (!is_file($filepath) || !empty($_GET['purgejscache'])) {
-            // Does not exist, minify files
-            $minjs = "";
-            foreach($files as $file) {
-                $minjs .= JSMinPlus::minify(file_get_contents($file));
-            }
-
-            file_put_contents($filepath, $minjs);
-        }
-
-        return array($fileurl);
-    }
-
-    public function loadMinifiedJavascripts() {
-        $files = $this->getMinifiedJavascripts(func_get_args());
-        $this->writeJavascripts($files);
-    }
-
-    public function getJavascripts($files = false) {
-        if(!$files) $files = func_get_args();
-        if (empty($files)) return false;
-
-        $files = $this->rewriteExternalFiles($files);
-        return $files;
-    }
-
-    public function loadJavascripts() {
-        $files = $this->getJavascripts(func_get_args());
-        $this->writeJavascripts($files);
-    }
-    
-    public function writeJavascripts($files) {
-        foreach ($files as $file) {
-            echo '<script src="' . $file . '"></script>' . "\n";
-        }        
+        return $file;
     }
 
     // This function is virtually identical to pageType, but prefixes the
@@ -264,6 +252,10 @@ abstract class Haybase {
     public function getBodyClass() {
         $c = $this->getPageType();
         return ($c == "404") ? "p404" : $c;
+    }
+
+    public function bodyClass() {
+        echo $this->getBodyClass();
     }
 
     public function pageType() {
@@ -353,17 +345,6 @@ abstract class Haybase {
         echo $this->getOpenGraphMetaTags();
     }
 
-    public function rewriteExternalFile($file) {
-        if (substr($file, 0, 4) != "http") {
-            // Remove possible slash, because we're going to add that anyway
-            if ($file[0] == "/") $file = substr($file, 1);
-
-            $file = $this->getTheme() . "/" . $file;
-        }
-
-        return $file;
-    }
-
     public function rewriteExternalFiles($files) {
         foreach ($files as &$file) {
             $file = $this->rewriteExternalFile($file);
@@ -401,5 +382,48 @@ abstract class Haybase {
         }
 
         return $o;
+    }
+
+    private function writeStylesheets($files) {
+        foreach ($files as $file) {
+            echo '<link rel="stylesheet" href="' . $file . '" />' . "\n";
+        }
+    }
+
+    private function minifyFiles($files, $type) {
+        if (!in_array($type, array("css", "js"))) {
+            throw new HaybaseException("Invalid type to minify");
+        }
+
+        $files = $this->rewriteExternalFiles($files);
+
+        // Check if a cache version already exists for these files
+        $filename = md5(implode($files)) . ".$type";
+        $filepath = $this->cachePath . "/$type/$filename";
+        $fileurl = $this->cacheUrl . "/$type/$filename";
+
+        // You can purge the cache by adding a ?purgecache=1 to the URL
+        if (!is_file($filepath) || !empty($_GET['purgecache'])) {
+            // Does not exist, minify files
+            $minified = "";
+            foreach($files as $file) {
+                $filecnt = file_get_contents($file);
+                if ($type == "js") {
+                    $minified .= JSMinPlus::minify($filecnt);
+                } else {
+                    $minified .= CssMin::minify($filecnt);
+                }
+            }
+
+            file_put_contents($filepath, $minified);
+        }
+
+        return array($fileurl);
+    }
+
+    private function writeJavascripts($files) {
+        foreach ($files as $file) {
+            echo '<script src="' . $file . '"></script>' . "\n";
+        }
     }
 }

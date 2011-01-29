@@ -1,3 +1,5 @@
-src/cache/*
+src/cache/js/*
+src/cache/img/*
+src/cache/css/*
 src/temp/*
 version.txt
