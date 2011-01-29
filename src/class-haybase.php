@@ -4,7 +4,7 @@
     Released under the GPL. See LICENSE for information
 */
 abstract class Haybase {
-    public $pluginPath, $pluginUrl;
+    public $pluginPath, $pluginUrl, $cachePath, $cacheUrl;
     protected $config;
 
     function __construct($args = false) {
@@ -12,6 +12,8 @@ abstract class Haybase {
         // could be a symlink, we're doing it this way.
 		$this->pluginPath = WP_CONTENT_DIR . "/plugins/haybase";
 		$this->pluginUrl = WP_CONTENT_URL . "/plugins/haybase";
+		$this->cachePath = WP_CONTENT_DIR . "/plugins/haybase/cache";
+		$this->cacheUrl = WP_CONTENT_URL . "/plugins/haybase/cache";
         add_theme_support('post-thumbnails');
 
         $this->config = $this->readConfig();
@@ -208,15 +210,53 @@ abstract class Haybase {
         }
     }
 
-    public function loadJavascripts() {
-        $files = func_get_args();
+    public function getMinifiedJavascripts($files = false) {
+        if (!$files) $files = func_get_args();
         if (empty($files)) return false;
 
         $files = $this->rewriteExternalFiles($files);
 
+        // Check if a cache version already exists for these files
+        $filename = md5(implode($files)) . ".js";
+        $filepath = $this->cachePath . "/js/$filename";
+        $fileurl = $this->cacheUrl . "/js/$filename";
+
+        // You can purge the cache by adding a ?purgejscache=1 to the URL
+        if (!is_file($filepath) || !empty($_GET['purgejscache'])) {
+            // Does not exist, minify files
+            $minjs = "";
+            foreach($files as $file) {
+                $minjs .= JSMinPlus::minify(file_get_contents($file));
+            }
+
+            file_put_contents($filepath, $minjs);
+        }
+
+        return array($fileurl);
+    }
+
+    public function loadMinifiedJavascripts() {
+        $files = $this->getMinifiedJavascripts(func_get_args());
+        $this->writeJavascripts($files);
+    }
+
+    public function getJavascripts($files = false) {
+        if(!$files) $files = func_get_args();
+        if (empty($files)) return false;
+
+        $files = $this->rewriteExternalFiles($files);
+        return $files;
+    }
+
+    public function loadJavascripts() {
+        $files = $this->getJavascripts(func_get_args());
+        $this->writeJavascripts($files);
+    }
+    
+    public function writeJavascripts($files) {
         foreach ($files as $file) {
             echo '<script src="' . $file . '"></script>' . "\n";
-        }
+        }        
     }
 
     // This function is virtually identical to pageType, but prefixes the
