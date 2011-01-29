@@ -408,8 +408,12 @@ abstract class Haybase {
             $minified = "";
             foreach($files as $file) {
                 $filecnt = file_get_contents($file);
+
                 if ($type == "js") {
-                    $minified .= JSMinPlus::minify($filecnt);
+                    $jsmin = JSMinPlus::minify($filecnt);
+                    // It seems JSMinPlus does something nasty with removing
+                    // the last semicolon from scripts, so we add it again
+                    $minified .= ";$jsmin";
                 } else {
                     $minified .= CssMin::minify($filecnt);
                 }
