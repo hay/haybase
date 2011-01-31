@@ -39,6 +39,9 @@ Will output:
     <link rel="stylesheet" href="http://www.example.com/wp-content/themes/mytheme/css/reset.css" />
     <link rel="stylesheet" href="http://www.example.com/wp-content/themes/mytheme/css/style.css" />
 
+**NOTE** that the CSS will be moved to Haybase's cache, which means that relative paths in your CSS will not work. 
+There's currently no workaround, so for the time being you have to simply not use this feature.
+
 ### Using an array as the argument ###
 Both `loadStylesheets` and `loadJavascripts` also accept an array as an argument:
 
