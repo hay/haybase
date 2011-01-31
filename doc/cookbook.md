@@ -81,6 +81,14 @@ Just as with the regular functions you can use `getMinifiedStylesheets` and
 `getMinifiedJavascripts` to get an array of files instead of directly writing to
 your page.
 
+### JSMin vs JSMinPlus ###
+Haybase comes with two libraries to minify Javascript: JSMin and JSMinPlus. JSMin is a direct port of
+Douglas Crockford's original jsmin library, JSMinPlus is an enhanced version of that and might give 
+smaller filesizes. Unfortunately JSMinPlus does have some problems with jQuery plugins, so JSMin is 
+the default minifier. To change this change the config parameter 'jsminifier' to 'jsminplus':
+
+    $T->setConfig('jsminifier', 'jsminplus');
+
 ### Considerations during development ###
 Using the minified option might pose some problems when developing. Haybase caches
 your minified files and therefore any changes you make in your files **won't**

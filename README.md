@@ -6,28 +6,29 @@ If you have ever written a WordPress theme or plugin you probably noticed that
 a lot of the code seems repetitive and alike. Of course, you can copy-paste
 stuff from the standard themes, but is that really the right way to write a theme?
 
-Haybase provides an easy interface to many features of WordPress. Writing very 
-simple, nice object-orientated PHP5, you can add stuff like post thumbnails, 
-Facebook Open Graph data, minified javascripts, theme options pages or a 
+Haybase provides an easy interface to many features of WordPress. Writing very
+simple, nice object-orientated PHP5, you can add stuff like post thumbnails,
+Facebook Open Graph data, minified javascripts, theme options pages or a
 list of recent comments.
 
 Features
 --------
-* Timthumb image resize script for post thumbnails (or any other image)
-* Simple way to get an array with your
-    * Recent posts
-    * Recent comments
-* Easy ways to access common variables in your theme (such as the theme directory)
-* Helper scripts for adding CSS styles and Javascript
-* Automatically minify Javascript
-* Get the page type
-* Lightweight template functionality
+Easily…
+* Resize post thumbnails (or any other image)
+* Add CSS/JS scripts with automatic minifying (makes your site a lot faster)
+* Add Facebook Open Graph metadata to your page for better sharing
 * Add theme option pages
-* Easy adding of Facebook Open Graph metadata to your page
+* Get arrays with your recent posts or comments
+* Access common variables in your theme (such as the theme directory)
+* Get the page type
+* Do templating, with a lightweight function
+
+Other things:
 * Utility functions for commonly used stuff
 * Open source, GPL licensed. Just like WordPress itself.
 * Clean, object-orientated, PHP5 code with classes instead of
   endlessly_long_function_names_with_lots_of_underscores_and_prefixes
+* No ads or hidden spyware
 
 Requirements
 ------------

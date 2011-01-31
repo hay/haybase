@@ -2,5 +2,6 @@
     "defaultcharset" : "utf-8",
     "postthumb_width" : 320,
     "postthumb_height" : 200,
-    "postthumb_customkey" : "post-image"
+    "postthumb_customkey" : "post-image",
+    "jsminifier" : "jsmin"
 }

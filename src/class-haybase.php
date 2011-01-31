@@ -410,10 +410,14 @@ abstract class Haybase {
                 $filecnt = file_get_contents($file);
 
                 if ($type == "js") {
-                    $jsmin = JSMinPlus::minify($filecnt);
-                    // It seems JSMinPlus does something nasty with removing
-                    // the last semicolon from scripts, so we add it again
-                    $minified .= ";$jsmin";
+                    // JSMinPlus gives some problems for me with jQuery plugins, 
+                    // so JSMin is default but can be overwritten by setting 
+                    // 'jsminifier' in the config
+                    if ($this->config->jsminifier == "jsminplus") {
+                        $minified .= JSMinPlus::minify($filecnt);
+                    } else {
+                        $minified .= JSMin::minify($filecnt);    
+                    }
                 } else {
                     $minified .= CssMin::minify($filecnt);
                 }
