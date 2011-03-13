@@ -249,9 +249,12 @@ abstract class Haybase {
 
     // This function is virtually identical to pageType, but prefixes the
     // '404' as 'p404' because CSS classes that start with a number are invalid
+    // And adds 'archive' as an extra class when needed
     public function getBodyClass() {
         $c = $this->getPageType();
-        return ($c == "404") ? "p404" : $c;
+        if ($c == "404") $c = "p404";
+        if (is_archive()) $c .= " archive";
+        return $c;
     }
 
     public function bodyClass() {
@@ -410,13 +413,13 @@ abstract class Haybase {
                 $filecnt = file_get_contents($file);
 
                 if ($type == "js") {
-                    // JSMinPlus gives some problems for me with jQuery plugins, 
-                    // so JSMin is default but can be overwritten by setting 
+                    // JSMinPlus gives some problems for me with jQuery plugins,
+                    // so JSMin is default but can be overwritten by setting
                     // 'jsminifier' in the config
                     if ($this->config->jsminifier == "jsminplus") {
                         $minified .= JSMinPlus::minify($filecnt);
                     } else {
-                        $minified .= JSMin::minify($filecnt);    
+                        $minified .= JSMin::minify($filecnt);
                     }
                 } else {
                     $minified .= CssMin::minify($filecnt);
