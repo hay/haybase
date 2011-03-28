@@ -14,8 +14,19 @@ class HaybaseTheme extends Haybase {
     public function themeOption($id) {
         echo $this->themepage->getOption($id);
     }
-    
+
     public function getThemeOption($id) {
         return $this->themepage->getOption($id);
+    }
+
+    public function navMenu($handle, $initArgs = array()) {
+        $args = array_merge(
+            array(
+                "menu" => $handle
+            ),
+            $initArgs
+        );
+
+        wp_nav_menu($args);
     }
 }

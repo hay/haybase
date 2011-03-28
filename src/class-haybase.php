@@ -23,6 +23,8 @@ abstract class Haybase {
         }
 
         $this->config = (object) $this->config;
+        $this->parseConfig();
+
     }
 
     public function getConfig() {
@@ -36,6 +38,16 @@ abstract class Haybase {
             $this->config = array_merge($this->config, $a1);
         } else if (is_string($a1) && is_string($a2)) {
             $this->config->$a1 = $a2;
+        }
+    }
+
+    private function parseConfig() {
+        // Look for stuff we might need
+        if ($this->config->nav_menus) {
+            add_theme_support('nav_menus');
+            foreach ($this->config->nav_menus as $handle => $label) {
+                register_nav_menu($handle, $label);
+            }
         }
     }
 
@@ -249,9 +261,12 @@ abstract class Haybase {
 
     // This function is virtually identical to pageType, but prefixes the
     // '404' as 'p404' because CSS classes that start with a number are invalid
+    // And adds 'archive' as an extra class when needed
     public function getBodyClass() {
         $c = $this->getPageType();
-        return ($c == "404") ? "p404" : $c;
+        if ($c == "404") $c = "p404";
+        if (is_archive()) $c .= " archive";
+        return $c;
     }
 
     public function bodyClass() {
@@ -311,6 +326,14 @@ abstract class Haybase {
 
     public function getPostTags() {
         return get_the_tag_list('', ', ');
+    }
+
+    public function hasPreviousPost() {
+        return get_adjacent_post(false, '', true) != null;
+    }
+
+    public function hasNextPost() {
+        return get_adjacent_post(false, '', false) != null;
     }
 
     public function escape($str) {
@@ -410,13 +433,13 @@ abstract class Haybase {
                 $filecnt = file_get_contents($file);
 
                 if ($type == "js") {
-                    // JSMinPlus gives some problems for me with jQuery plugins, 
-                    // so JSMin is default but can be overwritten by setting 
+                    // JSMinPlus gives some problems for me with jQuery plugins,
+                    // so JSMin is default but can be overwritten by setting
                     // 'jsminifier' in the config
                     if ($this->config->jsminifier == "jsminplus") {
                         $minified .= JSMinPlus::minify($filecnt);
                     } else {
-                        $minified .= JSMin::minify($filecnt);    
+                        $minified .= JSMin::minify($filecnt);
                     }
                 } else {
                     $minified .= CssMin::minify($filecnt);
