@@ -23,6 +23,8 @@ abstract class Haybase {
         }
 
         $this->config = (object) $this->config;
+        $this->parseConfig();
+
     }
 
     public function getConfig() {
@@ -36,6 +38,16 @@ abstract class Haybase {
             $this->config = array_merge($this->config, $a1);
         } else if (is_string($a1) && is_string($a2)) {
             $this->config->$a1 = $a2;
+        }
+    }
+
+    private function parseConfig() {
+        // Look for stuff we might need
+        if ($this->config->nav_menus) {
+            add_theme_support('nav_menus');
+            foreach ($this->config->nav_menus as $handle => $label) {
+                register_nav_menu($handle, $label);
+            }
         }
     }
 
