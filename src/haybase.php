@@ -3,7 +3,7 @@
 Plugin Name: Haybase
 Plugin URI: http://www.haykranen.nl/projects/haybase?utm_source=haybaseplugin&utm_medium=plugin&utm_campaign=hknl
 Description: Makes developing themes and plugins infinitely more easy
-Version: 0.2
+Version: 0.2.1
 Author: Hay Kranen
 Author URI: http://www.haykranen.nl?utm_source=haybaseplugin&utm_medium=plugin&utm_campaign=hknl
 */
