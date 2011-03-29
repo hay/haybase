@@ -22,6 +22,6 @@ require_once 'class-haybase-theme.php';
 require_once 'class-haybase-theme-page.php';
 
 // External libs
-// require_once 'class-jsminplus.php';
+require_once 'class-mustache.php';
 require_once 'class-jsmin.php';
 require_once 'class-cssmin.php';

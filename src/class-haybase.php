@@ -361,6 +361,16 @@ abstract class Haybase {
         return $template;
     }
 
+    // Identical to parseTemplate in API, but uses Mustache instead of the
+    // 'lightweight' template function
+    public function parseMustacheTemplate($file, $options) {
+        $template = file_get_contents($file);
+        if (!template) return false;
+
+        $m = new Mustache;
+        return $m->render($template, $options);
+    }
+
     // Returns <meta> tags with basic Open Graph information
     // See http://opengraphprotocol.org/
     // Note that you still need to add the xmlns to your html tag
