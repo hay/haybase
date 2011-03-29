@@ -51,9 +51,15 @@ abstract class Haybase {
         }
     }
 
-    public function getPostThumbResized($id, $width = false, $height = false) {
+    public function getPostThumbResized($id, $width = false, $height = false, $altImage = false) {
         $imgUrl = $this->getPostThumbUrl($id);
-        if (!$imgUrl) return false;
+        if (!$imgUrl) {
+            if ($altImage) {
+                $imgUrl = $altImage;
+            } else {
+                return false;
+            }
+        }
 
         $width = (isset($width)) ? $width : $this->config->postthumb_width;
         $height = (isset($height)) ? $height : $this->config->postthumb_height;
