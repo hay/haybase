@@ -3,7 +3,7 @@
 Plugin Name: Haybase
 Plugin URI: http://www.haykranen.nl/projects/haybase?utm_source=haybaseplugin&utm_medium=plugin&utm_campaign=hknl
 Description: Makes developing themes and plugins infinitely more easy
-Version: 0.2.1
+Version: 0.2.1-SNAPSHOT
 Author: Hay Kranen
 Author URI: http://www.haykranen.nl?utm_source=haybaseplugin&utm_medium=plugin&utm_campaign=hknl
 */
@@ -22,6 +22,6 @@ require_once 'class-haybase-theme.php';
 require_once 'class-haybase-theme-page.php';
 
 // External libs
-// require_once 'class-jsminplus.php';
+require_once 'class-mustache.php';
 require_once 'class-jsmin.php';
 require_once 'class-cssmin.php';

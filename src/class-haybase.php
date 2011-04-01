@@ -51,12 +51,18 @@ abstract class Haybase {
         }
     }
 
-    public function getPostThumbResized($id, $width = false, $height = false) {
+    public function getPostThumbResized($id, $width = false, $height = false, $altImage = false) {
         $imgUrl = $this->getPostThumbUrl($id);
-        if (!$imgUrl) return false;
+        if (!$imgUrl) {
+            if ($altImage) {
+                $imgUrl = $altImage;
+            } else {
+                return false;
+            }
+        }
 
-        $width = (isset($width)) ? $width : $this->config->postthumb_width;
-        $height = (isset($height)) ? $height : $this->config->postthumb_height;
+        $width = (!empty($width)) ? $width : $this->config->postthumb_width;
+        $height = (!empty($height)) ? $height : $this->config->postthumb_height;
 
         return $this->getResizeUrl($imgUrl, $width, $height);
     }
@@ -359,6 +365,16 @@ abstract class Haybase {
         }
 
         return $template;
+    }
+
+    // Identical to parseTemplate in API, but uses Mustache instead of the
+    // 'lightweight' template function
+    public function parseMustacheTemplate($file, $options) {
+        $template = file_get_contents($file);
+        if (!template) return false;
+
+        $m = new Mustache;
+        return $m->render($template, $options);
     }
 
     // Returns <meta> tags with basic Open Graph information
