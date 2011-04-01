@@ -61,8 +61,8 @@ abstract class Haybase {
             }
         }
 
-        $width = (isset($width)) ? $width : $this->config->postthumb_width;
-        $height = (isset($height)) ? $height : $this->config->postthumb_height;
+        $width = (!empty($width)) ? $width : $this->config->postthumb_width;
+        $height = (!empty($height)) ? $height : $this->config->postthumb_height;
 
         return $this->getResizeUrl($imgUrl, $width, $height);
     }
