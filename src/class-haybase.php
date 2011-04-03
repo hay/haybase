@@ -316,6 +316,14 @@ abstract class Haybase {
         return get_the_tag_list('', ', ');
     }
 
+    public function hasPreviousPost() {
+        return get_adjacent_post(false, '', true) != null;
+    }
+
+    public function hasNextPost() {
+        return get_adjacent_post(false, '', false) != null;
+    }
+
     public function escape($str) {
         return htmlentities($str, ENT_QUOTES, $this->config->defaultcharset);
     }
