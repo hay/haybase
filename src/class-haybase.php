@@ -162,6 +162,29 @@ abstract class Haybase {
         return bloginfo('stylesheet_directory');
     }
 
+    public function previousPostLink() {
+        echo $this->getPreviousPostLink();
+    }
+
+    public function getPreviousPostLink() {
+        return $this->getAdjacentPostLink("previous");
+    }
+
+    public function nextPostLink() {
+        echo $this->getNextPostLink();
+    }
+
+    public function getNextPostLink() {
+        return $this->getAdjacentPostLink("next");
+    }
+
+    private function getAdjacentPostLink($type) {
+        $previous = ($type == "previous");
+        $post = get_adjacent_post(false, '', $previous);
+        if (!post) return;
+        return get_permalink($post);
+    }
+
     public function home() {
         echo $this->getHome();
     }
