@@ -77,7 +77,19 @@ abstract class Haybase {
         $thumbid = get_post_thumbnail_id($post->ID);
         $img = wp_get_attachment_image_src($thumbid, $size);
         if ($img) {
-            return $img[0];
+            $imgsrc = $img[0];
+
+            // HACK: Due to the way how WordPress handles image attachments (with
+            // absolute urls) and how timthumb handles local files (as absolute
+            // paths) we need to rewrite the url
+            // This should be easier somehow...
+            if (defined('MULTISITE')) {
+                $path = str_replace("wp-content", "", WP_CONTENT_URL) . "files/";
+                $uploaddir = str_replace($_SERVER['DOCUMENT_ROOT'], '', BLOGUPLOADDIR);
+                return str_replace($path, $uploaddir, $imgsrc);
+            }
+
+            return $imgsrc;
         } else if (!$img && $this->config->postthumb_customkey) {
             // Might have a custom key
             $key = get_post_custom($id);
