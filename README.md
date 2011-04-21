@@ -33,7 +33,19 @@ Other things:
 Requirements
 ------------
 * PHP 5.2 or higher
-* WordPress 2.7 or higher
+* WordPress 3.0 or higher. Might work on versions as low as 2.7 but that's not tested
+
+Installation
+------------
+# Check out the latest version here using git
+
+    git clone git@github.com:hay/haybase.git
+
+# Copy the 'src' directory to a directory named 'haybase' in your plugins directory
+
+    cp src ~/path/to/your/wordpress/install/wp-content/plugins/haybase
+
+# Activate in the plugins screen
 
 Documentation
 -------------
