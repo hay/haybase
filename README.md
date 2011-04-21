@@ -37,15 +37,15 @@ Requirements
 
 Installation
 ------------
-# Check out the latest version here using git
+1. Check out the latest version using git
 
     git clone git@github.com:hay/haybase.git
 
-# Copy the 'src' directory to a directory named 'haybase' in your plugins directory
+2. Copy the 'src' directory to a directory named 'haybase' in your plugins directory
 
     cp src ~/path/to/your/wordpress/install/wp-content/plugins/haybase
 
-# Activate in the plugins screen
+3. Activate in the plugins screen
 
 Documentation
 -------------
