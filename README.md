@@ -11,6 +11,8 @@ simple, nice object-orientated PHP5, you can add stuff like post thumbnails,
 Facebook Open Graph data, minified javascripts, theme options pages or a
 list of recent comments.
 
+Think of it like jQuery is to Javascript: an indispensable library for development.
+
 Features
 --------
 Easily…
@@ -21,7 +23,7 @@ Easily…
 * Get arrays with your recent posts or comments
 * Access common variables in your theme (such as the theme directory)
 * Get the page type
-* Do templating, with a lightweight function
+* Do templating, using the magic of [mustache]
 
 Other things:
 * Utility functions for commonly used stuff
@@ -40,6 +42,8 @@ Installation
 1. Check out the latest version using git
 
     git clone git@github.com:hay/haybase.git
+
+Or download the latest version as a [zipfile]
 
 2. Copy the 'src' directory to a directory named 'haybase' in your plugins directory
 
@@ -114,3 +118,5 @@ Haybase includes code from:
 
 [docs]: http://www.haykranen.nl/projects/haybase
 [jsonlint]: http://www.jsonlint.com
+[zipfile]: http://github.com/hay/haybase/zipball/master
+[mustache]: http://mustache.github.com/
