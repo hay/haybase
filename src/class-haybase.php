@@ -331,6 +331,24 @@ abstract class Haybase {
         return 'archive';
     }
 
+    public function getRandomPost() {
+        $posts = get_posts(array(
+            "numberposts" => 1,
+            "orderby" => "rand"
+        ));
+
+        return $posts[0];
+    }
+
+    public function randomPostUrl() {
+        echo $this->getRandomPostUrl();
+    }
+
+    public function getRandomPostUrl() {
+        $post = $this->getRandomPost();
+        return get_permalink($post->ID);
+    }
+
     public function authorUrl() {
         echo $this->getAuthorUrl();
     }
