@@ -85,7 +85,7 @@ abstract class Haybase {
         $thumbid = get_post_thumbnail_id($post->ID);
         $img = wp_get_attachment_image_src($thumbid, $size);
         if ($img) {
-            return $this->rewriteImage($img[0]);
+            return $img[0];
         } else if (!$img && $this->config->postthumb_customkey) {
             // Might have a custom key
             $key = get_post_custom($id);
@@ -444,19 +444,6 @@ abstract class Haybase {
         die('<h1 style="color:red;">' . $msg . '</h1>');
     }
 
-<<<<<<< HEAD
-    private function rewriteImage($src) {
-        if (!defined("MULTISITE")) return $src;
-
-        // HACK: Due to the way how WordPress handles image attachments (with
-        // absolute urls) and how timthumb handles local files (as absolute
-        // paths) we need to rewrite the url
-        // This should be easier somehow...
-        $path = str_replace("wp-content", "", WP_CONTENT_URL) . "files/";
-        $uploaddir = str_replace($_SERVER['DOCUMENT_ROOT'], '', BLOGUPLOADDIR);
-        $newsrc = str_replace($path, $uploaddir, $src);
-        return $newsrc;
-=======
     // Rewrite a URL to an absolute path to an uploaded file
     private function rewriteUploadUrl($url) {
         return str_replace(
@@ -464,7 +451,6 @@ abstract class Haybase {
             BLOGUPLOADDIR,
             $url
         );
->>>>>>> dev
     }
 
     private function readConfig() {
