@@ -19,8 +19,8 @@ define ('DIRECTORY_CACHE', './cache/img');  // cache directory
 define ('MAX_WIDTH', 1500);                 // maximum image width
 define ('MAX_HEIGHT', 1500);                // maximum image height
 define ('ALLOW_EXTERNAL', FALSE);           // allow external website (override security precaution - not advised!)
-define ('MEMORY_LIMIT', '30M');             // set PHP memory limit
-define ('MAX_FILE_SIZE', 1500000);          // file size limit to prevent possible DOS attacks (roughly 1.5 megabytes)
+define ('MEMORY_LIMIT', '64M');             // set PHP memory limit
+define ('MAX_FILE_SIZE', 3000000);          // file size limit to prevent possible DOS attacks (roughly 1.5 megabytes)
 define ('CURL_TIMEOUT', 10);                // timeout duration. Tweak as you require (lower = better)
 
 // external domains that are allowed to be displayed on your website

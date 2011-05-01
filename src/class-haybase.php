@@ -68,6 +68,13 @@ abstract class Haybase {
     }
 
     public function getResizeUrl($src, $width, $height, $zc = "1") {
+        // WordPress does some strange voodoo mod_rewrite stuff with multisite
+        // support, this is a hack to fix it
+        if (defined("MULTISITE")) {
+            $absolutePath = $this->rewriteUploadUrl($src);
+            $src = str_replace(ABSPATH, "", $absolutePath);
+        }
+
         return sprintf($this->pluginUrl . "/timthumb.php?src=%s&amp;w=%s&amp;h=%s&amp;zc=%s",
             $src, $width, $height, $zc
         );
@@ -434,6 +441,15 @@ abstract class Haybase {
 
     protected function halt($msg) {
         die('<h1 style="color:red;">' . $msg . '</h1>');
+    }
+
+    // Rewrite a URL to an absolute path to an uploaded file
+    private function rewriteUploadUrl($url) {
+        return str_replace(
+            $this->getHome() . "/files/",
+            BLOGUPLOADDIR,
+            $url
+        );
     }
 
     private function readConfig() {
