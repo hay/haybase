@@ -69,6 +69,13 @@ abstract class Haybase {
     }
 
     public function getResizeUrl($src, $width, $height, $zc = "1") {
+        // WordPress does some strange voodoo mod_rewrite stuff with multisite
+        // support, this is a hack to fix it
+        if (defined("MULTISITE")) {
+            $absolutePath = $this->rewriteUploadUrl($src);
+            $src = str_replace(ABSPATH, "", $absolutePath);
+        }
+
         return sprintf($this->pluginUrl . "/timthumb.php?src=%s&amp;w=%s&amp;h=%s&amp;zc=%s",
             $src, $width, $height, $zc
         );
@@ -332,6 +339,24 @@ abstract class Haybase {
         return 'archive';
     }
 
+    public function getRandomPost() {
+        $posts = get_posts(array(
+            "numberposts" => 1,
+            "orderby" => "rand"
+        ));
+
+        return $posts[0];
+    }
+
+    public function randomPostUrl() {
+        echo $this->getRandomPostUrl();
+    }
+
+    public function getRandomPostUrl() {
+        $post = $this->getRandomPost();
+        return get_permalink($post->ID);
+    }
+
     public function authorUrl() {
         echo $this->getAuthorUrl();
     }
@@ -419,6 +444,7 @@ abstract class Haybase {
         die('<h1 style="color:red;">' . $msg . '</h1>');
     }
 
+<<<<<<< HEAD
     private function rewriteImage($src) {
         if (!defined("MULTISITE")) return $src;
 
@@ -430,6 +456,15 @@ abstract class Haybase {
         $uploaddir = str_replace($_SERVER['DOCUMENT_ROOT'], '', BLOGUPLOADDIR);
         $newsrc = str_replace($path, $uploaddir, $src);
         return $newsrc;
+=======
+    // Rewrite a URL to an absolute path to an uploaded file
+    private function rewriteUploadUrl($url) {
+        return str_replace(
+            $this->getHome() . "/files/",
+            BLOGUPLOADDIR,
+            $url
+        );
+>>>>>>> dev
     }
 
     private function readConfig() {
