@@ -29,4 +29,17 @@ class HaybaseTheme extends Haybase {
 
         wp_nav_menu($args);
     }
+
+    public function hasSubPages($pageId) {
+        $pages = get_pages(array(
+            "child_of" => $pageId
+        ));
+
+        return !empty($pages);
+    }
+
+    public function isSubPage($pageId) {
+        $post = get_post($pageId);
+        return is_page($pageId) && $post->post_parent;
+    }
 }
