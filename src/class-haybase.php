@@ -186,11 +186,46 @@ abstract class Haybase {
         return $this->getAdjacentPostLink("next");
     }
 
+    public function getBreadcrumb($id = false) {
+        if (!$id) {
+            global $post;
+            $id = $post->ID;
+        }
+
+        if (is_front_page()) {
+            return false;
+        }
+
+        $tree = array();
+
+        do {
+            array_push($tree, $this->getPostMeta($id));
+            $postData = get_post($id);
+            if ($postData->post_parent && $postData->post_parent != 0) {
+                $id = $postData->post_parent;
+            } else {
+                $id = false;
+            }
+        } while ($id);
+
+        return array_reverse($tree);
+    }
+
     private function getAdjacentPostLink($type) {
         $previous = ($type == "previous");
         $post = get_adjacent_post(false, '', $previous);
         if (!post) return;
         return get_permalink($post);
+    }
+
+    private function getPostMeta($id) {
+        $post = get_post($id);
+
+        return array(
+            "id" => $post->ID,
+            "title" => get_the_title($post->ID),
+            "link" => get_permalink($post->ID)
+        );
     }
 
     public function home() {
