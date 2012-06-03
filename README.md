@@ -94,7 +94,8 @@ because there is no good foundation.
 *Are there any examples of (free) themes using Haybase i can download, study
 and use?*
 
-Haybase is very new software, so no themes that i know of have been built.
+* [Wikimedia Nederland theme](https://github.com/hay/wmnl-theme)
+
 If you have build a theme using Haybase that is free, please let me know so i
 can add it to a list in this file and on the website!
 
