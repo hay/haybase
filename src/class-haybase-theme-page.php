@@ -115,6 +115,7 @@ class HaybaseThemePage {
         // If no type is available, default to 'text'
         $type = (isset($opt['type'])) ? $opt['type'] : "text";
         $setting = $this->getOption($id);
+
         $value = false;
         $defaultTemplateValues = array(
             "id" => $id,
@@ -122,6 +123,13 @@ class HaybaseThemePage {
         );
 
         switch($type) {
+            case "checkbox":
+                $setting = !($setting === "false" || $setting === false);
+                $checked = $setting == false ? '' : 'checked';
+                $value = "" .
+                    '<input type="hidden" name="' . $id . '" value="false" />' .
+                    '<input type="checkbox" name="' . $id . '" ' . $checked . '>';
+                break;
             case "textarea":
                 $value = $this->template("textarea", $defaultTemplateValues);
                 break;
@@ -164,6 +172,12 @@ class HaybaseThemePage {
             if (isset($_POST[$id])) {
                 // Strip stupid magic quotes
                 $value = (get_magic_quotes_gpc()) ? stripslashes($_POST[$id]) : $_POST[$id];
+
+                // Check if this might be a checkbox
+                // TODO: what happens if someone wants to use the string 'on' ?
+                if ($value == "on") {
+                    $value = true;
+                }
 
                 $toSave[$id] = $value;
             }
